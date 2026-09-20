@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Premium New Tab Dashboard",
+  "version": "1.0.0",
+  "description": "A premium glassmorphism new tab dashboard with widgets, customizable backgrounds, and productivity tools.",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": [
+    "storage",
+    "history",
+    "notifications"
+  ],
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  }
+}

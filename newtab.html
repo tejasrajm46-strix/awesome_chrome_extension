@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Tab</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body data-theme="dark" data-mode="glass">
+
+  <!-- Onboarding Overlay -->
+  <div id="onboarding" class="onboarding hidden">
+    <div class="onboarding-card glass">
+      <h1 class="onboarding-title">Make your new tab yours.</h1>
+      <p class="onboarding-subtitle">Set up your perfect start page in seconds.</p>
+      <div class="onboarding-actions">
+        <button id="onboard-bg" class="onboard-btn primary">Choose Background</button>
+        <button id="onboard-bm" class="onboard-btn">Add Bookmarks</button>
+        <button id="onboard-start" class="onboard-btn ghost">Start Exploring</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background Layer -->
+  <div id="bg-layer" class="bg-layer">
+    <img id="bg-image" class="bg-media hidden" src="" alt="" />
+    <video id="bg-video" class="bg-media hidden" muted loop autoplay playsinline preload="auto"></video>
+    <div id="bg-overlay" class="bg-overlay"></div>
+  </div>
+
+  <!-- Main Dashboard -->
+  <div class="dashboard" id="dashboard">
+
+    <!-- Left Column -->
+    <main class="left-col" id="left-col">
+      <!-- Clock Block -->
+      <div class="clock-block" id="clock-block">
+        <span id="greeting" class="greeting"></span>
+        <div class="clock-row">
+          <span id="clock-time" class="clock-time">00:00</span>
+          <span id="clock-ampm" class="clock-ampm">AM</span>
+        </div>
+        <div id="clock-date" class="clock-date"></div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="search-wrapper" id="search-wrapper">
+        <form id="search-form" class="search-form">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="search-input" type="text" placeholder="Search the web..." autocomplete="off" />
+          <button type="button" class="search-engine-pill" id="search-engine-pill">
+            <span id="engine-label">Google</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <button type="submit" class="search-submit-btn" title="Search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+        </form>
+        <!-- Search Engine Dropdown -->
+        <div id="engine-dropdown" class="engine-dropdown hidden">
+          <button class="engine-option" data-engine="google">Google</button>
+          <button class="engine-option" data-engine="bing">Bing</button>
+          <button class="engine-option" data-engine="duckduckgo">DuckDuckGo</button>
+          <button class="engine-option" data-engine="brave">Brave</button>
+        </div>
+        <div id="suggestions-box" class="suggestions-box hidden"></div>
+      </div>
+
+      <!-- Quote -->
+      <div class="quote-block" id="quote-block">
+        <p id="quote-text" class="quote-text"></p>
+        <span id="quote-author" class="quote-author"></span>
+      </div>
+
+      <!-- Spacer -->
+      <div class="center-spacer"></div>
+
+      <!-- Bookmarks -->
+      <section id="bookmarks-section" class="widget glass bookmarks-widget" data-widget-id="bookmarks">
+        <div class="widget-header">
+          <h3>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;margin-right:4px"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            Bookmarks
+          </h3>
+          <button id="add-bookmark-btn" class="widget-action-btn" title="Add bookmark">+ Add</button>
+        </div>
+        <div class="bookmarks-grid" id="bookmarks-grid"></div>
+      </section>
+    </main>
+
+    <!-- Right Side Widgets -->
+    <aside class="widgets-panel" id="widgets-panel">
+      <!-- Calendar -->
+      <section id="calendar-section" class="widget glass widget-calendar" data-widget-id="calendar">
+        <div class="widget-header">
+          <h3>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Calendar
+          </h3>
+          <div class="cal-nav">
+            <button id="cal-prev" class="cal-btn" title="Previous month">&lt;</button>
+            <span id="cal-month-year"></span>
+            <button id="cal-next" class="cal-btn" title="Next month">&gt;</button>
+          </div>
+        </div>
+        <div class="cal-weekdays">
+          <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+        </div>
+        <div class="cal-days" id="cal-days"></div>
+      </section>
+
+      <!-- To-Do List -->
+      <section id="todo-section" class="widget glass widget-todo" data-widget-id="todo">
+        <div class="widget-header">
+          <h3>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            To-Do List
+          </h3>
+        </div>
+        <form id="todo-form" class="todo-form">
+          <input id="todo-input" type="text" placeholder="Add a task..." />
+          <button type="submit" class="todo-add-btn">+</button>
+        </form>
+        <ul id="todo-list" class="todo-list"></ul>
+      </section>
+
+      <!-- Notes -->
+      <section id="notes-section" class="widget glass widget-notes" data-widget-id="notes">
+        <div class="widget-header">
+          <h3>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Notes
+          </h3>
+          <div class="notes-actions">
+            <span id="notes-count" class="notes-count"></span>
+            <button id="notes-clear" class="widget-action-btn" title="Clear notes">Clear</button>
+          </div>
+        </div>
+        <textarea id="notes-textarea" placeholder="Type your notes here..."></textarea>
+      </section>
+
+      <!-- Reminders -->
+      <section id="reminders-section" class="widget glass widget-reminders" data-widget-id="reminders">
+        <div class="widget-header">
+          <h3>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Reminders
+          </h3>
+        </div>
+        <form id="reminder-form" class="reminder-form">
+          <input id="reminder-input" type="text" placeholder="Reminder text..." />
+          <input id="reminder-time" type="datetime-local" />
+          <button type="submit" class="todo-add-btn">+</button>
+        </form>
+        <ul id="reminder-list" class="reminder-list"></ul>
+      </section>
+
+      <!-- Recently Visited -->
+      <section id="recent-section" class="widget glass widget-recent" data-widget-id="recent">
+        <div class="widget-header">
+          <h3>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Recently Visited
+          </h3>
+          <button id="recent-clear" class="widget-action-btn" title="Clear history view">Clear</button>
+        </div>
+        <ul id="recent-list" class="recent-list"></ul>
+      </section>
+    </aside>
+
+    <!-- Settings FAB -->
+    <button id="btn-settings" class="settings-fab" title="Settings">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Settings Panel -->
+  <div id="settings-overlay" class="settings-overlay hidden">
+    <div class="settings-panel glass">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <button id="settings-close" class="icon-btn">&times;</button>
+      </div>
+      <div class="settings-body">
+
+        <!-- Clock Format -->
+        <div class="settings-group">
+          <h3>Clock Format</h3>
+          <div class="settings-row">
+            <button class="format-btn active" data-format="12">12 Hour</button>
+            <button class="format-btn" data-format="24">24 Hour</button>
+          </div>
+        </div>
+
+        <!-- Theme -->
+        <div class="settings-group">
+          <h3>Theme Mode</h3>
+          <div class="settings-row">
+            <button class="mode-btn" data-mode="light">Light</button>
+            <button class="mode-btn active" data-mode="glass">Glass</button>
+            <button class="mode-btn" data-mode="dark">Dark</button>
+          </div>
+        </div>
+
+        <!-- Accent Color -->
+        <div class="settings-group">
+          <h3>Accent Color</h3>
+          <div class="accent-colors">
+            <button class="accent-btn active" data-accent="#5b8def" style="background:#5b8def" title="Blue"></button>
+            <button class="accent-btn" data-accent="#ff6b6b" style="background:#ff6b6b" title="Red"></button>
+            <button class="accent-btn" data-accent="#51cf66" style="background:#51cf66" title="Green"></button>
+            <button class="accent-btn" data-accent="#ffd43b" style="background:#ffd43b" title="Yellow"></button>
+            <button class="accent-btn" data-accent="#cc5de8" style="background:#cc5de8" title="Purple"></button>
+            <button class="accent-btn" data-accent="#ff922b" style="background:#ff922b" title="Orange"></button>
+            <button class="accent-btn" data-accent="#20c997" style="background:#20c997" title="Teal"></button>
+            <button class="accent-btn" data-accent="#f06595" style="background:#f06595" title="Pink"></button>
+          </div>
+        </div>
+
+        <!-- Search Engine -->
+        <div class="settings-group">
+          <h3>Search Engine</h3>
+          <div class="settings-row">
+            <button class="engine-pick-btn active" data-engine="google">Google</button>
+            <button class="engine-pick-btn" data-engine="bing">Bing</button>
+            <button class="engine-pick-btn" data-engine="duckduckgo">DuckDuckGo</button>
+            <button class="engine-pick-btn" data-engine="brave">Brave</button>
+          </div>
+        </div>
+
+        <!-- Widget Toggles -->
+        <div class="settings-group">
+          <h3>Show / Hide Widgets</h3>
+          <label class="toggle-row"><input type="checkbox" data-toggle="clock" checked /><span>Clock</span></label>
+          <label class="toggle-row"><input type="checkbox" data-toggle="search" checked /><span>Search Bar</span></label>
+          <label class="toggle-row"><input type="checkbox" data-toggle="quote" checked /><span>Quote</span></label>
+          <label class="toggle-row"><input type="checkbox" data-toggle="bookmarks" checked /><span>Bookmarks</span></label>
+          <label class="toggle-row"><input type="checkbox" data-toggle="calendar" checked /><span>Calendar</span></label>
+          <label class="toggle-row"><input type="checkbox" data-toggle="todo" checked /><span>To-Do List</span></label>
+          <label class="toggle-row"><input type="checkbox" data-toggle="notes" checked /><span>Notes</span></label>
+          <label class="toggle-row"><input type="checkbox" data-toggle="reminders" checked /><span>Reminders</span></label>
+          <label class="toggle-row"><input type="checkbox" data-toggle="recent" checked /><span>Recently Visited</span></label>
+        </div>
+
+        <!-- Background -->
+        <div class="settings-group">
+          <h3>Background</h3>
+          <div class="bg-actions">
+            <button id="bg-upload-btn" class="settings-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Upload Image / Video
+            </button>
+            <button id="bg-remove-btn" class="settings-btn danger">Remove Background</button>
+            <button id="bg-reset-btn" class="settings-btn">Reset to Default</button>
+          </div>
+          <input type="file" id="bg-file-input" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" class="hidden" />
+          <div id="bg-status" class="bg-status"></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="settings-group">
+          <h3>Actions</h3>
+          <button id="settings-reset" class="settings-btn danger">Reset All Settings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bookmark Modal -->
+  <div id="bookmark-modal" class="settings-overlay hidden">
+    <div class="settings-panel glass" style="max-width:380px">
+      <div class="settings-header">
+        <h2 id="bm-modal-title">Add Bookmark</h2>
+        <button id="bm-modal-close" class="icon-btn">&times;</button>
+      </div>
+      <div class="settings-body">
+        <input type="text" id="bm-name" placeholder="Name" class="modal-input" />
+        <input type="url" id="bm-url" placeholder="https://example.com" class="modal-input" />
+        <input type="hidden" id="bm-edit-index" value="-1" />
+        <button id="bm-save" class="settings-btn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts (order matters - storage must load first) -->
+  <script src="js/storage.js"></script>
+  <script src="js/background.js"></script>
+  <script src="js/clock.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/bookmarks.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/todo.js"></script>
+  <script src="js/notes.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

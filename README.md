@@ -26,6 +26,8 @@ A premium Chrome/Edge new tab extension with glassmorphism design, customizable 
 3. Click "Load unpacked"
 4. Select the `my-extensio-2` folder
 
+For a packaged download, extract the ZIP attached to the GitHub release and select the extracted folder with **Load unpacked**. Do not include or share the `.pem` signing key.
+
 ## Permissions
 
 - `storage` - Save settings and data locally
@@ -42,6 +44,8 @@ my-extensio-2/
 │   └── style.css
 ├── js/
 │   ├── app.js          # Main orchestrator
+│   ├── layout.js        # Widget layout and resizing
+│   ├── pomodoro.js      # Pomodoro timer
 │   ├── background.js    # Background image/video + storage
 │   ├── clock.js         # Clock and greeting
 │   ├── search.js        # Multi-engine search

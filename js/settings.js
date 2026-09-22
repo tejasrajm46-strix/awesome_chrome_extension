@@ -97,6 +97,32 @@ window.App.Settings = (function () {
       });
     });
 
+    document.querySelectorAll('.pomodoro-set-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var duration = b.dataset.duration;
+        var breakTime = b.dataset.break;
+        if (duration) {
+          App.Pomodoro.setSetting('workMinutes', parseInt(duration, 10));
+        }
+        if (breakTime) {
+          App.Pomodoro.setSetting('breakMinutes', parseInt(breakTime, 10));
+        }
+        // Visual feedback
+        document.querySelectorAll('.pomodoro-set-btn').forEach(function (x) { x.classList.remove('active'); });
+        b.classList.add('active');
+      });
+    });
+    // Highlight active pomodoro duration on open
+    (function applyPomodoroActive() {
+      var s = App.Pomodoro.getSettings();
+      document.querySelectorAll('.pomodoro-set-btn[data-duration]').forEach(function (b) {
+        b.classList.toggle('active', parseInt(b.dataset.duration,10) === s.workMinutes);
+      });
+      document.querySelectorAll('.pomodoro-set-btn[data-break]').forEach(function (b) {
+        b.classList.toggle('active', parseInt(b.dataset.break,10) === s.breakMinutes);
+      });
+    })();
+
     document.querySelectorAll('[data-toggle]').forEach(function (cb) {
       cb.addEventListener('change', function () {
         var hidden = App.Storage.get('hidden-widgets', []);

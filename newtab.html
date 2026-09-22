@@ -8,7 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 </head>
 <body data-theme="dark" data-mode="glass">
-
   <!-- Onboarding Overlay -->
   <div id="onboarding" class="onboarding hidden">
     <div class="onboarding-card glass">
@@ -77,12 +76,13 @@
       <div class="center-spacer"></div>
 
       <!-- Bookmarks -->
-      <section id="bookmarks-section" class="widget glass bookmarks-widget" data-widget-id="bookmarks">
+      <section id="bookmarks-section" class="widget glass bookmarks-widget" data-widget-id="bookmarks" draggable="true">
         <div class="widget-header">
           <h3>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;margin-right:4px"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             Bookmarks
           </h3>
+          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
           <button id="add-bookmark-btn" class="widget-action-btn" title="Add bookmark">+ Add</button>
         </div>
         <div class="bookmarks-grid" id="bookmarks-grid"></div>
@@ -92,12 +92,13 @@
     <!-- Right Side Widgets -->
     <aside class="widgets-panel" id="widgets-panel">
       <!-- Calendar -->
-      <section id="calendar-section" class="widget glass widget-calendar" data-widget-id="calendar">
+      <section id="calendar-section" class="widget glass widget-calendar" data-widget-id="calendar" draggable="true">
         <div class="widget-header">
           <h3>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             Calendar
           </h3>
+          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
           <div class="cal-nav">
             <button id="cal-prev" class="cal-btn" title="Previous month">&lt;</button>
             <span id="cal-month-year"></span>
@@ -111,12 +112,13 @@
       </section>
 
       <!-- To-Do List -->
-      <section id="todo-section" class="widget glass widget-todo" data-widget-id="todo">
+      <section id="todo-section" class="widget glass widget-todo" data-widget-id="todo" draggable="true">
         <div class="widget-header">
           <h3>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
             To-Do List
           </h3>
+          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
         </div>
         <form id="todo-form" class="todo-form">
           <input id="todo-input" type="text" placeholder="Add a task..." />
@@ -126,12 +128,13 @@
       </section>
 
       <!-- Notes -->
-      <section id="notes-section" class="widget glass widget-notes" data-widget-id="notes">
+      <section id="notes-section" class="widget glass widget-notes" data-widget-id="notes" draggable="true">
         <div class="widget-header">
           <h3>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             Notes
           </h3>
+          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
           <div class="notes-actions">
             <span id="notes-count" class="notes-count"></span>
             <button id="notes-clear" class="widget-action-btn" title="Clear notes">Clear</button>
@@ -140,13 +143,37 @@
         <textarea id="notes-textarea" placeholder="Type your notes here..."></textarea>
       </section>
 
+      <!-- Pomodoro Timer -->
+      <section id="pomodoro-section" class="widget glass widget-pomodoro" data-widget-id="pomodoro" draggable="true">
+        <div class="widget-header">
+          <h3>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Pomodoro Timer
+          </h3>
+          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
+        </div>
+        <div class="pomodoro-container">
+          <div class="pomodoro-display" id="pomodoro-display">25:00</div>
+          <div class="pomodoro-progress">
+            <div class="pomodoro-progress-bar" id="pomodoro-progress"></div>
+          </div>
+          <div class="pomodoro-controls">
+            <button id="pomodoro-start" class="todo-add-btn" title="Start timer">Start</button>
+            <button id="pomodoro-stop" class="todo-add-btn" title="Stop timer">Stop</button>
+            <button id="pomodoro-reset" class="todo-add-btn" title="Reset timer">Reset</button>
+          </div>
+          <div class="pomodoro-sessions" id="pomodoro-sessions">Sessions: 0</div>
+        </div>
+      </section>
+
       <!-- Reminders -->
-      <section id="reminders-section" class="widget glass widget-reminders" data-widget-id="reminders">
+      <section id="reminders-section" class="widget glass widget-reminders" data-widget-id="reminders" draggable="true">
         <div class="widget-header">
           <h3>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             Reminders
           </h3>
+          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
         </div>
         <form id="reminder-form" class="reminder-form">
           <input id="reminder-input" type="text" placeholder="Reminder text..." />
@@ -157,25 +184,35 @@
       </section>
 
       <!-- Recently Visited -->
-      <section id="recent-section" class="widget glass widget-recent" data-widget-id="recent">
+      <section id="recent-section" class="widget glass widget-recent" data-widget-id="recent" draggable="true">
         <div class="widget-header">
           <h3>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             Recently Visited
           </h3>
+          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
           <button id="recent-clear" class="widget-action-btn" title="Clear history view">Clear</button>
         </div>
         <ul id="recent-list" class="recent-list"></ul>
       </section>
     </aside>
 
-    <!-- Settings FAB -->
+    <!-- Settings + Customize FABs -->
+    <button id="btn-customize" class="settings-fab" style="right:84px" title="Customize layout">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    </button>
     <button id="btn-settings" class="settings-fab" title="Settings">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
       </svg>
     </button>
+    <!-- Customize Bar -->
+    <div id="customize-bar" class="customize-bar hidden">
+      <span class="bar-label">Drag widgets to rearrange - Drag corner to resize</span>
+      <button id="customize-done" class="bar-btn primary">Done</button>
+      <button id="customize-reset" class="bar-btn">Reset layout</button>
+    </div>
   </div>
 
   <!-- Settings Panel -->
@@ -193,6 +230,20 @@
           <div class="settings-row">
             <button class="format-btn active" data-format="12">12 Hour</button>
             <button class="format-btn" data-format="24">24 Hour</button>
+          </div>
+        </div>
+
+        <!-- Pomodoro Settings -->
+        <div class="settings-group">
+          <h3>Pomodoro Timer</h3>
+          <div class="settings-row">
+            <button class="pomodoro-set-btn" data-duration="25">25 min Work</button>
+            <button class="pomodoro-set-btn" data-duration="50">50 min Work</button>
+            <button class="pomodoro-set-btn" data-duration="20">20 min Work</button>
+          </div>
+          <div class="settings-row" style="margin-top:8px">
+            <button class="pomodoro-set-btn" data-break="5">5 min Break</button>
+            <button class="pomodoro-set-btn" data-break="10">10 min Break</button>
           </div>
         </div>
 
@@ -241,6 +292,7 @@
           <label class="toggle-row"><input type="checkbox" data-toggle="bookmarks" checked /><span>Bookmarks</span></label>
           <label class="toggle-row"><input type="checkbox" data-toggle="calendar" checked /><span>Calendar</span></label>
           <label class="toggle-row"><input type="checkbox" data-toggle="todo" checked /><span>To-Do List</span></label>
+          <label class="toggle-row"><input type="checkbox" data-toggle="pomodoro" checked /><span>Pomodoro Timer</span></label>
           <label class="toggle-row"><input type="checkbox" data-toggle="notes" checked /><span>Notes</span></label>
           <label class="toggle-row"><input type="checkbox" data-toggle="reminders" checked /><span>Reminders</span></label>
           <label class="toggle-row"><input type="checkbox" data-toggle="recent" checked /><span>Recently Visited</span></label>
@@ -288,6 +340,8 @@
 
   <!-- Scripts (order matters - storage must load first) -->
   <script src="js/storage.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/pomodoro.js"></script>
   <script src="js/background.js"></script>
   <script src="js/clock.js"></script>
   <script src="js/search.js"></script>

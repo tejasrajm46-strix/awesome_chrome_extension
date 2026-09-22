@@ -57,9 +57,9 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .icon-btn:hover{color:var(--text-primary);background:rgba(255,255,255,0.08)}
 
 /* ===== Dashboard Grid ===== */
-.dashboard{position:relative;z-index:2;display:grid;grid-template-columns:1fr 320px;height:100vh;padding:32px 36px 20px;gap:24px}
-.left-col{grid-column:1;display:flex;flex-direction:column;min-width:0}
-.widgets-panel{grid-column:2;display:flex;flex-direction:column;gap:12px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent}
+.dashboard{position:relative;z-index:2;display:grid;grid-template-columns:1fr 320px;height:100vh;padding:32px 36px 20px;gap:24px;overflow:visible}
+.left-col{grid-column:1;display:flex;flex-direction:column;min-width:0;overflow:visible;position:relative;z-index:5}
+.widgets-panel{grid-column:2;display:flex;flex-direction:column;gap:12px;overflow-y:auto;overflow-x:visible;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent;position:relative;z-index:3}
 .widgets-panel::-webkit-scrollbar{width:3px}
 .widgets-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:10px}
 .center-spacer{flex:1;min-height:80px}
@@ -73,7 +73,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .clock-date{font-size:13px;color:var(--text-dim);margin-top:4px}
 
 /* ===== Search ===== */
-.search-wrapper{position:relative;max-width:420px;margin-bottom:16px}
+.search-wrapper{position:relative;max-width:420px;margin-bottom:16px;z-index:50}
 .search-form{display:flex;align-items:center;background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:0 6px 0 14px;gap:8px;transition:border-color 0.3s,box-shadow 0.3s}
 .search-form:focus-within{border-color:var(--accent-glow);box-shadow:0 0 0 3px var(--accent-glow)}
 [data-mode="light"] .search-form{background:rgba(255,255,255,0.7);border-color:rgba(0,0,0,0.08)}
@@ -92,7 +92,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .engine-option.active{color:var(--accent);font-weight:600}
 .search-submit-btn{width:36px;height:36px;border-radius:11px;border:none;background:var(--accent);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
 .search-submit-btn:hover{background:var(--accent-hover);transform:scale(1.05)}
-.suggestions-box{position:absolute;top:calc(100% + 6px);left:0;right:0;background:rgba(18,18,28,0.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;z-index:500;box-shadow:0 12px 40px rgba(0,0,0,0.6);max-height:320px;overflow-y:auto}
+.suggestions-box{position:absolute;top:calc(100% + 6px);left:0;right:0;background:rgba(18,18,28,0.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;z-index:999;box-shadow:0 12px 40px rgba(0,0,0,0.6);max-height:320px;overflow-y:auto}
 [data-mode="light"] .suggestions-box{background:rgba(255,255,255,0.97);border-color:rgba(0,0,0,0.08)}
 .suggestion-item{display:flex;align-items:center;gap:12px;padding:10px 16px;font-size:13px;color:var(--text-secondary);cursor:pointer;transition:background 0.12s}
 .suggestion-item:hover,.suggestion-item.active{background:rgba(255,255,255,0.08);color:var(--text-primary)}
@@ -129,7 +129,40 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .bm-edit:hover{color:var(--accent);background:rgba(91,141,239,0.3)}
 
 /* ===== Widget base ===== */
-.widget{padding:16px;flex-shrink:0;transition:all 0.3s}
+.widget{padding:16px;flex-shrink:0;transition:transform 0.3s, box-shadow 0.3s, border-color 0.3s, opacity 0.3s;overflow:hidden;contain:layout style}
+.widget.resizing{transition:none !important;user-select:none}
+.resizing-active{user-select:none !important;cursor:se-resize !important}
+.resizing-active *{user-select:none !important}
+/* Modular resize handles - discrete, show on hover or customize mode */
+.resize-handle{position:absolute;z-index:11;opacity:0;transition:opacity 0.18s, background 0.18s, border-color 0.18s;pointer-events:auto}
+.widget:hover .resize-handle, .customize-mode .resize-handle, .widget.resizing .resize-handle{opacity:1}
+.resize-handle-e{top:12px;right:1px;bottom:12px;width:8px;cursor:ew-resize;border-radius:999px;background:transparent;border:1px solid transparent}
+.resize-handle-e:hover,.resize-handle-e:active{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12)}
+.resize-handle-s{left:12px;right:12px;bottom:1px;height:8px;cursor:ns-resize;border-radius:999px;background:transparent;border:1px solid transparent}
+.resize-handle-s:hover,.resize-handle-s:active{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12)}
+.resize-handle-se{right:4px;bottom:4px;width:14px;height:14px;cursor:se-resize;border-radius:3px;background:linear-gradient(135deg, transparent 50%, var(--text-dim) 50%);background-size:6px 6px;background-repeat:no-repeat;background-position:bottom right;opacity:0.35}
+.widget:hover .resize-handle-se{opacity:0.9}
+.resize-handle-se:hover{opacity:1 !important;background-color:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12)}
+.todo-add-btn:disabled{opacity:0.45;cursor:not-allowed;transform:none}
+/* Prevent handles from stealing clicks from inner controls when not resizing */
+.widget .todo-form,.widget .reminder-form,.widget .pomodoro-controls,.widget .bookmark-grid{position:relative;z-index:1}
+/* Draggable widgets */
+.widget.dragging{opacity:0.45;transform:scale(0.97) rotate(1deg);border:2px dashed var(--accent);z-index:1000}
+.widget.drag-over{outline:2px dashed var(--accent);outline-offset:2px}
+.widget-drop-placeholder{box-sizing:border-box;border:2px dashed var(--accent);border-radius:var(--radius);background:var(--accent-glow);opacity:.7;flex:0 0 auto;min-height:140px;transition:height .15s,width .15s}
+.customize-mode .drag-handle{touch-action:none}
+.widget-dragging{cursor:grabbing !important}
+.drag-handle{cursor:grab;display:flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:6px;color:var(--text-dim);opacity:0;transition:opacity 0.2s,background 0.2s;margin-left:6px;flex-shrink:0}
+.widget:hover .drag-handle,.customize-mode .drag-handle{opacity:1}
+.drag-handle:active{cursor:grabbing}
+.drag-handle:hover{background:rgba(255,255,255,0.08);color:var(--text-secondary)}
+.customize-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:900;display:flex;align-items:center;gap:12px;padding:10px 18px;background:rgba(18,18,28,0.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12);border-radius:999px;box-shadow:0 12px 40px rgba(0,0,0,0.5);pointer-events:none}
+.customize-bar>*{pointer-events:auto}
+.customize-bar .bar-label{font-size:12px;font-weight:600;color:var(--text-secondary)}
+.customize-bar .bar-btn{padding:6px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:var(--text-primary);font-size:12px;font-weight:600;cursor:pointer}
+.customize-bar .bar-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.customize-mode .widget{cursor:move}
+.customize-mode .widgets-panel,.customize-mode .left-col{outline:1px dashed rgba(255,255,255,0.08);outline-offset:6px;border-radius:var(--radius)}
 
 /* ===== Calendar ===== */
 .cal-nav{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-secondary)}
@@ -214,7 +247,9 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .settings-group{margin-bottom:20px}
 .settings-group h3{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:10px}
 .settings-row{display:flex;gap:6px;flex-wrap:wrap}
-.format-btn,.mode-btn,.engine-pick-btn{padding:6px 14px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text-secondary);font-size:12px;font-family:inherit;cursor:pointer;transition:0.2s}
+.format-btn,.mode-btn,.engine-pick-btn,.pomodoro-set-btn{padding:6px 14px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text-secondary);font-size:12px;font-family:inherit;cursor:pointer;transition:0.2s}
+.pomodoro-set-btn:hover{background:rgba(255,255,255,0.08);color:var(--text-primary)}
+.pomodoro-set-btn.active{background:var(--accent-glow);color:var(--accent);border-color:var(--accent)}
 .format-btn:hover,.mode-btn:hover,.engine-pick-btn:hover{background:rgba(255,255,255,0.08);color:var(--text-primary)}
 .format-btn.active,.mode-btn.active,.engine-pick-btn.active{background:var(--accent-glow);color:var(--accent);border-color:var(--accent)}
 [data-mode="light"] .format-btn,[data-mode="light"] .mode-btn,[data-mode="light"] .engine-pick-btn{background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.08)}
@@ -250,6 +285,15 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .onboard-btn.primary:hover{background:var(--accent-hover);box-shadow:0 4px 20px var(--accent-glow)}
 .onboard-btn.ghost{background:transparent;color:var(--text-secondary);border-color:transparent}
 .onboard-btn.ghost:hover{color:var(--text-primary)}
+
+/* ===== Pomodoro Timer ===== */
+.pomodoro-container{text-align:center;padding:20px 10px}
+.pomodoro-display{font-size:48px;font-weight:800;color:var(--accent);margin:10px 0;min-width:80px}
+.pomodoro-progress{height:8px;border-radius:4px;background:rgba(255,255,255,0.1);overflow:hidden;margin:10px auto}
+.pomodoro-progress-bar{height:100%;background:var(--accent);width:0%;transition:width 0.1s linear}
+.pomodoro-controls{display:flex;gap:6px;margin-top:12px;justify-content:center}
+.pomodoro-controls .todo-add-btn{width:36px;height:36px;font-size:14px;padding:0}
+.pomodoro-sessions{font-size:11px;color:var(--text-secondary);margin-top:8px}
 
 /* ===== Animations ===== */
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}

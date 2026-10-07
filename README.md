@@ -26,13 +26,6 @@ A new tab page that treats bookmarks as a small library instead of a list. Bookm
 however many you keep — a hundred bookmarks stay as usable as ten. Everything lives in
 your browser's own storage: no account, no server, no analytics.
 
-<br />
-
-<div align="center">
-  <img src="docs/dashboard.jpg" alt="Glass New Tab showing the clock, search, quote and a bookmark panel with three pages, eleven boards and 34 bookmarks" width="100%" />
-  <sub>A library of three pages and eleven boards — the panel scrolls, the page never grows out of its own card.</sub>
-</div>
-
 ---
 
 ## Install

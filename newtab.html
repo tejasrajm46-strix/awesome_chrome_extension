@@ -30,196 +30,87 @@
 
   <!-- Main Dashboard -->
   <div class="dashboard" id="dashboard">
+    <section class="clock-block free-widget widget-clock" id="clock-block" data-widget-id="clock">
+      <span id="greeting" class="greeting"></span>
+      <div class="clock-row"><span id="clock-time" class="clock-time">00:00</span><span id="clock-ampm" class="clock-ampm">AM</span></div>
+      <div id="clock-date" class="clock-date"></div>
+    </section>
 
-    <!-- Left Column -->
-    <main class="left-col" id="left-col">
-      <!-- Clock Block -->
-      <div class="clock-block" id="clock-block">
-        <span id="greeting" class="greeting"></span>
-        <div class="clock-row">
-          <span id="clock-time" class="clock-time">00:00</span>
-          <span id="clock-ampm" class="clock-ampm">AM</span>
-        </div>
-        <div id="clock-date" class="clock-date"></div>
-      </div>
-
-      <!-- Search Bar -->
-      <div class="search-wrapper" id="search-wrapper">
-        <form id="search-form" class="search-form">
-          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input id="search-input" type="text" placeholder="Search the web..." autocomplete="off" />
-          <button type="button" class="search-engine-pill" id="search-engine-pill">
-            <span id="engine-label">Google</span>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <button type="submit" class="search-submit-btn" title="Search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </button>
-        </form>
-        <!-- Search Engine Dropdown -->
-        <div id="engine-dropdown" class="engine-dropdown hidden">
-          <button class="engine-option" data-engine="google">Google</button>
-          <button class="engine-option" data-engine="bing">Bing</button>
-          <button class="engine-option" data-engine="duckduckgo">DuckDuckGo</button>
-          <button class="engine-option" data-engine="brave">Brave</button>
-        </div>
-        <div id="suggestions-box" class="suggestions-box hidden"></div>
-      </div>
-
-      <!-- Quote -->
-      <div class="quote-block" id="quote-block">
-        <p id="quote-text" class="quote-text"></p>
-        <span id="quote-author" class="quote-author"></span>
-      </div>
-
-      <!-- Spacer -->
-      <div class="center-spacer"></div>
-
-      <!-- Bookmarks -->
-      <section id="bookmarks-section" class="widget glass bookmarks-widget" data-widget-id="bookmarks" draggable="true">
-        <div class="widget-header">
-          <h3>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;margin-right:4px"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-            Bookmarks
-          </h3>
-          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
-          <button id="add-bookmark-btn" class="widget-action-btn" title="Add bookmark">+ Add</button>
-        </div>
-        <div class="bookmarks-grid" id="bookmarks-grid"></div>
-      </section>
-    </main>
-
-    <!-- Right Side Widgets -->
-    <aside class="widgets-panel" id="widgets-panel">
-      <!-- Calendar -->
-      <section id="calendar-section" class="widget glass widget-calendar" data-widget-id="calendar" draggable="true">
-        <div class="widget-header">
-          <h3>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            Calendar
-          </h3>
-          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
-          <div class="cal-nav">
-            <button id="cal-prev" class="cal-btn" title="Previous month">&lt;</button>
-            <span id="cal-month-year"></span>
-            <button id="cal-next" class="cal-btn" title="Next month">&gt;</button>
-          </div>
-        </div>
-        <div class="cal-weekdays">
-          <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
-        </div>
-        <div class="cal-days" id="cal-days"></div>
-      </section>
-
-      <!-- To-Do List -->
-      <section id="todo-section" class="widget glass widget-todo" data-widget-id="todo" draggable="true">
-        <div class="widget-header">
-          <h3>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-            To-Do List
-          </h3>
-          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
-        </div>
-        <form id="todo-form" class="todo-form">
-          <input id="todo-input" type="text" placeholder="Add a task..." />
-          <button type="submit" class="todo-add-btn">+</button>
-        </form>
-        <ul id="todo-list" class="todo-list"></ul>
-      </section>
-
-      <!-- Notes -->
-      <section id="notes-section" class="widget glass widget-notes" data-widget-id="notes" draggable="true">
-        <div class="widget-header">
-          <h3>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Notes
-          </h3>
-          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
-          <div class="notes-actions">
-            <span id="notes-count" class="notes-count"></span>
-            <button id="notes-clear" class="widget-action-btn" title="Clear notes">Clear</button>
-          </div>
-        </div>
-        <textarea id="notes-textarea" placeholder="Type your notes here..."></textarea>
-      </section>
-
-      <!-- Pomodoro Timer -->
-      <section id="pomodoro-section" class="widget glass widget-pomodoro" data-widget-id="pomodoro" draggable="true">
-        <div class="widget-header">
-          <h3>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Pomodoro Timer
-          </h3>
-          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
-        </div>
-        <div class="pomodoro-container">
-          <div class="pomodoro-display" id="pomodoro-display">25:00</div>
-          <div class="pomodoro-progress">
-            <div class="pomodoro-progress-bar" id="pomodoro-progress"></div>
-          </div>
-          <div class="pomodoro-controls">
-            <button id="pomodoro-start" class="todo-add-btn" title="Start timer">Start</button>
-            <button id="pomodoro-stop" class="todo-add-btn" title="Stop timer">Stop</button>
-            <button id="pomodoro-reset" class="todo-add-btn" title="Reset timer">Reset</button>
-          </div>
-          <div class="pomodoro-sessions" id="pomodoro-sessions">Sessions: 0</div>
-        </div>
-      </section>
-
-      <!-- Reminders -->
-      <section id="reminders-section" class="widget glass widget-reminders" data-widget-id="reminders" draggable="true">
-        <div class="widget-header">
-          <h3>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            Reminders
-          </h3>
-          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
-        </div>
-        <form id="reminder-form" class="reminder-form">
-          <input id="reminder-input" type="text" placeholder="Reminder text..." />
-          <input id="reminder-time" type="datetime-local" />
-          <button type="submit" class="todo-add-btn">+</button>
-        </form>
-        <ul id="reminder-list" class="reminder-list"></ul>
-      </section>
-
-      <!-- Recently Visited -->
-      <section id="recent-section" class="widget glass widget-recent" data-widget-id="recent" draggable="true">
-        <div class="widget-header">
-          <h3>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            Recently Visited
-          </h3>
-          <span class="drag-handle" title="Drag to move"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg></span>
-          <button id="recent-clear" class="widget-action-btn" title="Clear history view">Clear</button>
-        </div>
-        <ul id="recent-list" class="recent-list"></ul>
-      </section>
-    </aside>
-
-    <!-- Settings + Customize FABs -->
-    <button id="btn-customize" class="settings-fab" style="right:84px" title="Customize layout">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-    </button>
-    <button id="btn-settings" class="settings-fab" title="Settings">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-      </svg>
-    </button>
-    <!-- Customize Bar -->
-    <div id="customize-bar" class="customize-bar hidden">
-      <span class="bar-label">Drag widgets to rearrange - Drag corner to resize</span>
-      <button id="customize-done" class="bar-btn primary">Done</button>
-      <button id="customize-reset" class="bar-btn">Reset layout</button>
+    <div class="search-wrapper free-widget widget-search" id="search-wrapper" data-widget-id="search">
+      <form id="search-form" class="search-form">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="search-input" type="text" placeholder="Search the web..." autocomplete="off" />
+        <button type="button" class="search-engine-pill" id="search-engine-pill"><span id="engine-label">Google</span><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <button type="submit" class="search-submit-btn" title="Search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+      </form>
+      <div id="engine-dropdown" class="engine-dropdown hidden"><button class="engine-option" data-engine="google">Google</button><button class="engine-option" data-engine="bing">Bing</button><button class="engine-option" data-engine="duckduckgo">DuckDuckGo</button><button class="engine-option" data-engine="brave">Brave</button><button class="engine-option" data-engine="yahoo">Yahoo</button><button class="engine-option" data-engine="ecosia">Ecosia</button><button class="engine-option" data-engine="custom">Custom URL</button></div>
+      <div id="suggestions-box" class="suggestions-box hidden"></div>
     </div>
+
+    <div class="quote-block free-widget widget-quote" id="quote-block" data-widget-id="quote"><p id="quote-text" class="quote-text"></p><span id="quote-author" class="quote-author"></span></div>
+
+    <section id="bookmarks-section" class="bookmarks-widget glass free-widget widget-bookmarks" data-widget-id="bookmarks">
+      <div class="bookmark-heading">
+        <h1>Bookmarks</h1>
+        <div class="bookmark-actions">
+          <button id="add-bookmark-btn" class="toolbar-btn primary" type="button">+ Add Bookmark</button>
+          <details class="more-menu" id="workspace-more">
+            <summary title="More bookmark actions" aria-label="More bookmark actions">⋯</summary>
+            <div class="more-menu-list">
+              <button id="add-category-btn" class="text-action" type="button">+ New board</button>
+              <button id="add-page-btn" class="text-action" type="button">+ New page</button>
+              <button id="undo-action-btn" class="text-action" type="button" disabled>↶ Undo</button>
+              <button id="redo-action-btn" class="text-action" type="button" disabled>↷ Redo</button>
+              <button id="export-workspace-btn" class="text-action" type="button">Export backup</button>
+              <button id="import-workspace-btn" class="text-action" type="button">Import file</button>
+              <button id="export-html-btn" class="text-action" type="button">Export HTML</button>
+              <button id="export-csv-btn" class="text-action" type="button">Export CSV</button>
+              <button id="import-chrome-bookmarks-btn" class="text-action" type="button">Import Chrome</button>
+              <button id="trash-view-btn" class="text-action" type="button">Trash <span id="trash-count">0</span></button>
+              <button id="privacy-mode-btn" class="text-action" type="button" aria-pressed="false">◉ Privacy mode</button>
+              <input id="workspace-import-file" class="hidden" type="file" accept=".json,.html,.htm,.csv,application/json,text/html,text/csv" />
+            </div>
+          </details>
+        </div>
+      </div>
+      <div class="workspace-label">PAGES <span class="label-hint">Choose a workspace</span></div>
+      <div class="tab-scroller" id="page-tabs-scroller">
+        <div id="page-tabs" class="page-tabs" role="tablist" aria-label="Workspace pages"></div>
+        <div class="tab-scroller-actions">
+          <button type="button" class="tab-scroll-btn" data-scroll="prev" aria-label="Scroll pages left" title="Scroll left">&lsaquo;</button>
+          <button type="button" class="tab-scroll-btn" data-scroll="next" aria-label="Scroll pages right" title="Scroll right">&rsaquo;</button>
+          <button type="button" class="tab-add-btn" id="page-add-inline" aria-label="New page" title="New page">+</button>
+        </div>
+      </div>
+      <div class="workspace-label board-label">BOARDS <span class="label-hint">Groups in this page</span></div>
+      <div class="tab-scroller" id="category-tabs-scroller">
+        <div id="category-tabs" class="category-tabs" role="tablist" aria-label="Bookmark boards"></div>
+        <div class="tab-scroller-actions">
+          <button type="button" class="tab-scroll-btn" data-scroll="prev" aria-label="Scroll boards left" title="Scroll left">&lsaquo;</button>
+          <button type="button" class="tab-scroll-btn" data-scroll="next" aria-label="Scroll boards right" title="Scroll right">&rsaquo;</button>
+          <button type="button" class="tab-add-btn" id="board-add-inline" aria-label="New board" title="New board">+</button>
+        </div>
+      </div>
+      <div class="bookmark-toolbar">
+        <div class="bookmark-filter"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input id="bookmark-search" type="search" placeholder="Search bookmarks" data-placeholder-short="Search bookmarks" data-placeholder-long="Search titles, URLs, and descriptions..." autocomplete="off" aria-label="Search bookmarks" /><button type="button" id="exact-search-btn" class="exact-search-btn" aria-pressed="false" title="Require an exact field match">Exact</button></div>
+        <div class="toolbar-options"><label class="sort-select"><span class="label-hint">In</span><select id="bookmark-search-scope" aria-label="Search scope"><option value="workspace">All pages</option><option value="page">This page</option><option value="board">This board</option><option value="favorites">Favorites</option><option value="recently-visited">Recently visited</option></select></label><label class="sort-select"><span class="label-hint">Sort</span><select id="bookmark-sort" aria-label="Sort bookmarks"><option value="custom">Custom</option><option value="recent">Recently Added</option><option value="az">A–Z</option><option value="used">Most Used</option></select></label><div class="card-size-switch" role="group" aria-label="Card size"><button type="button" class="size-option" data-size="compact" title="Compact cards" aria-label="Compact cards">▤</button><button type="button" class="size-option active" data-size="medium" title="Medium cards" aria-label="Medium cards">▦</button><button type="button" class="size-option" data-size="large" title="Large cards" aria-label="Large cards">▧</button></div><div class="card-shape-switch" role="group" aria-label="Card shape"><button type="button" class="shape-option" data-shape="soft" title="Rounded cards" aria-label="Rounded cards"><span class="shape-dot shape-dot-soft"></span></button><button type="button" class="shape-option" data-shape="square" title="Squared-off cards" aria-label="Squared-off cards"><span class="shape-dot shape-dot-square"></span></button><button type="button" class="shape-option" data-shape="pill" title="Capsule cards" aria-label="Capsule cards"><span class="shape-dot shape-dot-pill"></span></button></div><div class="column-stepper" role="group" aria-label="Card columns"><button type="button" class="column-step" data-step="-1" title="Fewer, wider cards" aria-label="Fewer columns">−</button><output id="column-count" aria-live="polite">4</output><button type="button" class="column-step" data-step="1" title="More, narrower cards" aria-label="More columns">+</button></div></div>
+      </div>
+      <div class="bookmarks-grid" id="bookmarks-grid"></div>
+      <div id="bookmarks-empty" class="bookmarks-empty hidden"><span class="empty-mark">✦</span><strong>No bookmarks found</strong><span>Try another search, or add a bookmark to this category.</span></div>
+      <div id="bookmarks-status" class="bookmarks-status" aria-live="polite"></div>
+    </section>
+
+    <!-- Settings + Customize controls -->
+    <button id="btn-customize" class="settings-fab customize-fab" title="Move and resize dashboard widgets"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="m19.4 15 .1.1a1.7 1.7 0 0 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 0 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 0 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 0 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 0 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 0 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 0 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 0 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/></svg><span>Customize</span></button>
+    <button id="btn-settings" class="settings-fab settings-fab-secondary" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    <div id="widget-edit-bar" class="widget-edit-bar hidden"><span>Drag widgets to position · Pull an edge or corner to resize · Arrow keys resize the focused handle (Shift+arrows moves the widget) · Quick save: Ctrl/⌘+Shift+Y or right-click a page</span><button id="widget-edit-auto" type="button" aria-pressed="false">Auto arrange: off</button><button id="widget-edit-style" type="button">Widget shape</button><button id="widget-edit-reset" type="button">Reset layout</button><button id="widget-edit-done" type="button" class="save-layout-btn">Done</button></div>
   </div>
 
   <!-- Settings Panel -->
   <div id="settings-overlay" class="settings-overlay hidden">
     <div class="settings-panel glass">
       <div class="settings-header">
-        <h2>Settings</h2>
+        <div><span class="eyebrow">PERSONALIZE YOUR SPACE</span><h2>Customize dashboard</h2></div>
         <button id="settings-close" class="icon-btn">&times;</button>
       </div>
       <div class="settings-body">
@@ -230,20 +121,6 @@
           <div class="settings-row">
             <button class="format-btn active" data-format="12">12 Hour</button>
             <button class="format-btn" data-format="24">24 Hour</button>
-          </div>
-        </div>
-
-        <!-- Pomodoro Settings -->
-        <div class="settings-group">
-          <h3>Pomodoro Timer</h3>
-          <div class="settings-row">
-            <button class="pomodoro-set-btn" data-duration="25">25 min Work</button>
-            <button class="pomodoro-set-btn" data-duration="50">50 min Work</button>
-            <button class="pomodoro-set-btn" data-duration="20">20 min Work</button>
-          </div>
-          <div class="settings-row" style="margin-top:8px">
-            <button class="pomodoro-set-btn" data-break="5">5 min Break</button>
-            <button class="pomodoro-set-btn" data-break="10">10 min Break</button>
           </div>
         </div>
 
@@ -280,25 +157,39 @@
             <button class="engine-pick-btn" data-engine="bing">Bing</button>
             <button class="engine-pick-btn" data-engine="duckduckgo">DuckDuckGo</button>
             <button class="engine-pick-btn" data-engine="brave">Brave</button>
+            <button class="engine-pick-btn" data-engine="yahoo">Yahoo</button>
+            <button class="engine-pick-btn" data-engine="ecosia">Ecosia</button>
+            <button class="engine-pick-btn" data-engine="custom">Custom</button>
           </div>
         </div>
 
-        <!-- Widget Toggles -->
         <div class="settings-group">
-          <h3>Show / Hide Widgets</h3>
-          <label class="toggle-row"><input type="checkbox" data-toggle="clock" checked /><span>Clock</span></label>
-          <label class="toggle-row"><input type="checkbox" data-toggle="search" checked /><span>Search Bar</span></label>
-          <label class="toggle-row"><input type="checkbox" data-toggle="quote" checked /><span>Quote</span></label>
-          <label class="toggle-row"><input type="checkbox" data-toggle="bookmarks" checked /><span>Bookmarks</span></label>
-          <label class="toggle-row"><input type="checkbox" data-toggle="calendar" checked /><span>Calendar</span></label>
-          <label class="toggle-row"><input type="checkbox" data-toggle="todo" checked /><span>To-Do List</span></label>
-          <label class="toggle-row"><input type="checkbox" data-toggle="pomodoro" checked /><span>Pomodoro Timer</span></label>
-          <label class="toggle-row"><input type="checkbox" data-toggle="notes" checked /><span>Notes</span></label>
-          <label class="toggle-row"><input type="checkbox" data-toggle="reminders" checked /><span>Reminders</span></label>
-          <label class="toggle-row"><input type="checkbox" data-toggle="recent" checked /><span>Recently Visited</span></label>
+          <h3>Custom search URL</h3>
+          <label class="field-label" for="custom-search-url">URL template (include %s for the query)</label>
+          <input id="custom-search-url" class="modal-input" type="url" placeholder="https://example.com/search?q=%s" />
+          <p class="custom-search-help">Queries are inserted here and URL-encoded; they are sent directly to the search provider you choose.</p>
         </div>
 
-        <!-- Background -->
+        <div class="settings-group widget-shape-settings">
+          <h3>Widget shape</h3>
+          <label class="field-label" for="widget-shape-target">Choose a widget</label>
+          <select id="widget-shape-target" class="modal-input"><option value="clock">Clock</option><option value="search">Search</option><option value="quote">Quote</option><option value="bookmarks">Bookmarks</option></select>
+          <label class="field-label" for="widget-shape">Choose its shape</label>
+          <select id="widget-shape" class="modal-input"><option value="soft">Soft rounded</option><option value="square">Sharp corners</option><option value="capsule">Capsule</option></select>
+        </div>
+
+        <div class="settings-group">
+          <h3>Bookmark Display</h3>
+          <label class="range-row"><span>Columns <output id="columns-value">4</output></span><input id="columns-control" type="range" min="2" max="6" value="4" /></label>
+          <label class="range-row"><span>Card transparency <output id="transparency-value">8%</output></span><input id="transparency-control" type="range" min="3" max="24" value="8" /></label>
+          <label class="range-row"><span>Blur intensity <output id="blur-value">18px</output></span><input id="blur-control" type="range" min="0" max="32" value="18" /></label>
+          <label class="range-row"><span>Border radius <output id="radius-value">16px</output></span><input id="radius-control" type="range" min="8" max="28" value="16" /></label>
+          <label class="range-row"><span>Icon size <output id="icon-size-value">36px</output></span><input id="icon-size-control" type="range" min="24" max="52" value="36" /></label>
+          <label class="toggle-row"><input id="description-toggle" type="checkbox" /><span>Show bookmark descriptions</span></label>
+          <div class="live-preview-label"><span></span>Live preview updates as you customize</div>
+        </div>
+
+        <!-- Wallpaper -->
         <div class="settings-group">
           <h3>Background</h3>
           <div class="bg-actions">
@@ -322,6 +213,37 @@
     </div>
   </div>
 
+  <!-- Page Modal -->
+  <div id="page-modal" class="settings-overlay hidden">
+    <div class="settings-panel glass category-modal-panel">
+      <div class="settings-header"><div><span class="eyebrow">YOUR WORKSPACES</span><h2>New page</h2></div><button id="page-modal-close" class="icon-btn" aria-label="Close">&times;</button></div>
+      <div class="settings-body"><label class="field-label" for="page-name">Page name</label><input type="text" id="page-name" placeholder="e.g. Side Projects" class="modal-input" maxlength="28" /><button id="page-save" class="settings-btn category-save-btn">Create page</button></div>
+    </div>
+  </div>
+
+  <!-- Category Modal -->
+  <div id="category-modal" class="settings-overlay hidden">
+    <div class="settings-panel glass category-modal-panel">
+      <div class="settings-header"><div><span class="eyebrow">ORGANIZE YOUR LIBRARY</span><h2>New category</h2></div><button id="category-modal-close" class="icon-btn" aria-label="Close">&times;</button></div>
+      <div class="settings-body"><label class="field-label" for="category-name">Category name</label><input type="text" id="category-name" placeholder="e.g. Design Inspiration" class="modal-input" maxlength="28" /><button id="category-save" class="settings-btn category-save-btn">Create category</button></div>
+    </div>
+  </div>
+
+  <!-- Quick-save chooser -->
+  <div id="quick-save-modal" class="settings-overlay hidden">
+    <div class="settings-panel glass" style="max-width:420px">
+      <div class="settings-header"><div><span class="eyebrow">SAVE FOR LATER</span><h2>Quick save</h2></div><button id="quick-save-close" class="icon-btn" aria-label="Close">&times;</button></div>
+      <div class="settings-body">
+        <label class="field-label" for="quick-save-title">Title</label><input id="quick-save-title" class="modal-input" type="text" maxlength="200" />
+        <label class="field-label" for="quick-save-url">URL</label><input id="quick-save-url" class="modal-input" type="url" />
+        <label class="field-label" for="quick-save-description">Description</label><input id="quick-save-description" class="modal-input" type="text" maxlength="500" placeholder="Optional" />
+        <label class="field-label" for="quick-save-page">Page</label><select id="quick-save-page" class="modal-input"></select>
+        <label class="field-label" for="quick-save-board">Board</label><select id="quick-save-board" class="modal-input"></select>
+        <button id="quick-save-save" class="settings-btn">Save bookmark</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Bookmark Modal -->
   <div id="bookmark-modal" class="settings-overlay hidden">
     <div class="settings-panel glass" style="max-width:380px">
@@ -330,10 +252,14 @@
         <button id="bm-modal-close" class="icon-btn">&times;</button>
       </div>
       <div class="settings-body">
-        <input type="text" id="bm-name" placeholder="Name" class="modal-input" />
+          <input type="text" id="bm-name" placeholder="Name" class="modal-input" />
         <input type="url" id="bm-url" placeholder="https://example.com" class="modal-input" />
+        <input type="text" id="bm-description" placeholder="Short description (optional)" class="modal-input" />
+        <input type="text" id="bm-tags" placeholder="Tags, separated by commas" class="modal-input" />
+        <label class="field-label" for="bm-page">Page</label><select id="bm-page" class="modal-input" aria-label="Bookmark page"></select>
+        <label class="field-label" for="bm-category">Board</label><select id="bm-category" class="modal-input" aria-label="Bookmark board"></select>
         <input type="hidden" id="bm-edit-index" value="-1" />
-        <button id="bm-save" class="settings-btn">Save</button>
+        <button id="bm-save" class="settings-btn">Save bookmark</button>
       </div>
     </div>
   </div>
@@ -341,16 +267,11 @@
   <!-- Scripts (order matters - storage must load first) -->
   <script src="js/storage.js"></script>
   <script src="js/layout.js"></script>
-  <script src="js/pomodoro.js"></script>
   <script src="js/background.js"></script>
   <script src="js/clock.js"></script>
   <script src="js/search.js"></script>
   <script src="js/bookmarks.js"></script>
-  <script src="js/calendar.js"></script>
-  <script src="js/todo.js"></script>
-  <script src="js/notes.js"></script>
-  <script src="js/reminders.js"></script>
-  <script src="js/history.js"></script>
+  <script src="js/workspace.js"></script>
   <script src="js/settings.js"></script>
   <script src="js/app.js"></script>
 </body>

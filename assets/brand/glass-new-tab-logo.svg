@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Glass New Tab">
+  <title>Glass New Tab</title>
+  <!-- One shape, one fill. A 224 square, 56 corner radius, with the bookmark cut
+       clean through it: a 68 x 136 ribbon on the vertical centre with a 26 deep
+       tail, drawn as the opposite winding of the same path so evenodd punches a
+       real hole. Equal 44 margins top and bottom keep the ribbon optically centred;
+       a hole instead of a white shape is what lets one file sit on light, dark,
+       photo and one-colour backgrounds alike. -->
+  <path fill="#E0483C" fill-rule="evenodd" d="M72 16h112a56 56 0 0 1 56 56v112a56 56 0 0 1-56 56H72a56 56 0 0 1-56-56V72a56 56 0 0 1 56-56zM94 60h68v136l-34-26-34 26z"/>
+</svg>

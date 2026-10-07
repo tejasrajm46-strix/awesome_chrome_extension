@@ -7,7 +7,10 @@ window.App.Search = (function () {
     google: { name: 'Google', url: 'https://www.google.com/search?q=', suggest: 'https://suggestqueries.google.com/complete/search?client=chrome&q=' },
     bing: { name: 'Bing', url: 'https://www.bing.com/search?q=', suggest: 'https://api.bing.com/osjson.aspx?query=' },
     duckduckgo: { name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q=', suggest: 'https://duckduckgo.com/ac/?q=' },
-    brave: { name: 'Brave', url: 'https://search.brave.com/search?q=', suggest: 'https://search.brave.com/api/suggest?q=' }
+    brave: { name: 'Brave', url: 'https://search.brave.com/search?q=', suggest: 'https://search.brave.com/api/suggest?q=' },
+    yahoo: { name: 'Yahoo', url: 'https://search.yahoo.com/search?p=', suggest: 'https://suggestqueries.google.com/complete/search?client=chrome&q=' },
+    ecosia: { name: 'Ecosia', url: 'https://www.ecosia.org/search?q=', suggest: 'https://suggestqueries.google.com/complete/search?client=chrome&q=' },
+    custom: { name: 'Custom', url: '', suggest: 'https://suggestqueries.google.com/complete/search?client=chrome&q=' }
   };
 
   function getEngine() {
@@ -17,6 +20,19 @@ window.App.Search = (function () {
   function doSearch(q) {
     if (!q) return;
     var engine = ENGINES[getEngine()] || ENGINES.google;
+    if (getEngine() === 'custom') {
+      var template = App.Storage.get('custom-search-url', '');
+      if (!/^https?:\/\//i.test(template) || template.indexOf('%s') < 0) {
+        window.alert('Set a valid custom search URL template in Settings, using %s where the search terms belong.');
+        return;
+      }
+      try {
+        var customUrl = new URL(template.replace(/%s/g, encodeURIComponent(q)));
+        if (customUrl.protocol !== 'http:' && customUrl.protocol !== 'https:') throw new Error('Unsupported protocol');
+        window.location.href = customUrl.href;
+      } catch (error) { window.alert('The custom search URL is invalid.'); }
+      return;
+    }
     window.location.href = engine.url + encodeURIComponent(q);
   }
 
@@ -207,8 +223,13 @@ window.App.Search = (function () {
     }
   }
 
+  function setEngine(engine) {
+    if (!ENGINES[engine]) return false;
+    App.Storage.set('search-engine', engine);
+    updateEngineLabel();
+    if (input && input.value.trim().length >= 2) fetchSuggestions(input.value.trim()).then(renderSuggestions);
+    return true;
+  }
   function getEngines() { return ENGINES; }
-  function getCurrentEngine() { return getEngine(); }
-
-  return { init: init, getEngines: getEngines, getCurrentEngine: getCurrentEngine };
+  function getCurrentEngine() { return getEngine(); }    return { init: init, setEngine: setEngine, getEngines: getEngines, getCurrentEngine: getCurrentEngine };
 })();

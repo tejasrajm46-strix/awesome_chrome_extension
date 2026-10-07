@@ -1,371 +1,314 @@
-# ✨ Premium New Tab Dashboard
+<div align="center">
 
-> **Turn every new tab into your personal productivity workspace.**
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/banner-dark.png" />
+  <img src="docs/banner-light.png" alt="Glass New Tab — a bookmark dashboard for your new tab page" width="100%" />
+</picture>
 
-A beautiful, modern **Chrome/Edge New Tab extension** built with a sleek **glassmorphism design**, customizable backgrounds, powerful productivity widgets, and a fully personalized dashboard.
+<br />
 
-Transform your empty new-tab page into a place where you can **search, organize, plan, take notes, manage tasks, check your calendar, set reminders, and access your bookmarks** — all from one elegant interface.
+**Every new tab, your bookmarks — sorted into pages and boards, saved on your device.**
 
----
+[![Version](https://img.shields.io/badge/version-1.3.0-E0483C?style=for-the-badge)](manifest.json)
+[![Manifest](https://img.shields.io/badge/manifest-v3-BA362A?style=for-the-badge)](manifest.json)
+[![Chrome & Edge](https://img.shields.io/badge/chrome_%7C_edge-supported-E4665F?style=for-the-badge)](#install)
+[![License](https://img.shields.io/badge/license-MIT-822319?style=for-the-badge)](LICENSE)
+[![No tracking](https://img.shields.io/badge/tracking-none-E0483C?style=for-the-badge)](#privacy)
 
-## 🌌 Features
+[Install](#install) · [Features](#features) · [Screenshots](#screenshots) · [Shortcuts](#keyboard-shortcuts) · [Brand](#brand) · [FAQ](#faq)
 
-### 🎨 Beautiful & Customizable
-
-* **Full-screen Backgrounds** — Upload JPG, PNG, WebP images or MP4/WEBM videos
-* **Glassmorphism UI** — Modern translucent interface with smooth visual effects
-* **Themes** — Choose between Light, Dark, and Glass modes
-* **Accent Colors** — 8 customizable accent colors
-* **Widget Visibility** — Show or hide individual widgets
-* **Responsive Layout** — Designed to adapt to different screen sizes
-
-### 🕐 Smart Clock
-
-* 12-hour and 24-hour formats
-* Live clock updates
-* Automatic greetings based on the time of day:
-
-  * 🌅 Good Morning
-  * ☀️ Good Afternoon
-  * 🌇 Good Evening
-  * 🌙 Good Night
-
-### 🔎 Powerful Search
-
-Search the web directly from your new tab using:
-
-* Google
-* Bing
-* DuckDuckGo
-* Brave
-
-Includes search suggestions for a faster browsing experience.
-
-### 🔖 Smart Bookmarks
-
-Keep your favorite websites right on your dashboard.
-
-* Add bookmarks
-* Edit bookmarks
-* Delete bookmarks
-* Drag-and-drop reordering
-* Automatic website favicons
-* Quick access to frequently used websites
-
-### 📅 Interactive Calendar
-
-Stay organized with an integrated monthly calendar.
-
-* Monthly view
-* Navigate between months
-* Highlight today's date
-* Quick visual overview of your schedule
-
-### ✅ To-Do List
-
-Manage your daily tasks without leaving your new tab.
-
-* Create tasks
-* Mark tasks as completed
-* Delete tasks
-* Keep your daily workflow organized
-
-### 📝 Quick Notes
-
-A lightweight notepad for capturing ideas instantly.
-
-* Auto-saving
-* Character counter
-* Persistent local storage
-* No separate application required
-
-### ⏰ Reminders
-
-Never forget an important task.
-
-* Create date/time reminders
-* Browser notification support
-* Manage scheduled reminders
-* Receive alerts directly from the browser
-
-### 🕘 Recently Visited
-
-Quickly access websites you've recently visited using Chrome's history integration.
-
-### 🍅 Pomodoro Timer
-
-Stay focused with a built-in Pomodoro timer designed for productive work sessions and focused study.
-
-### 🧩 Customizable Dashboard
-
-Make the dashboard fit your workflow.
-
-* Show/hide widgets
-* Rearrange dashboard elements
-* Resize supported components
-* Personalize the overall workspace
-
-### 🚀 Onboarding
-
-A first-launch setup experience helps configure the dashboard before you start using it.
-
-### 💾 Offline-Friendly
-
-Local productivity features continue to work without an internet connection.
-
-Your dashboard data and settings are stored locally in the browser.
+</div>
 
 ---
 
-# 📸 Dashboard
+A new tab page that treats bookmarks as a small library instead of a list. Bookmark
+**pages** group your work, **boards** group them inside a page, and the panel scrolls
+however many you keep — a hundred bookmarks stay as usable as ten. Everything lives in
+your browser's own storage: no account, no server, no analytics.
 
-The extension transforms your new-tab page into a personalized workspace containing your most important tools in one place.
+<br />
 
-**Search • Bookmarks • Calendar • Tasks • Notes • Reminders • Pomodoro • History**
-
-> **One tab. Everything you need.**
+<div align="center">
+  <img src="docs/dashboard.jpg" alt="Glass New Tab showing the clock, search, quote and a bookmark panel with three pages, eleven boards and 34 bookmarks" width="100%" />
+  <sub>A library of three pages and eleven boards — the panel scrolls, the page never grows out of its own card.</sub>
+</div>
 
 ---
 
-# 🛠️ Installation
+## Install
 
-## Option 1 — Load Unpacked
+Two ways in. Both take about thirty seconds.
 
-1. Download or clone this repository.
-2. Open Chrome and navigate to:
+### 1. From the release ZIP (no terminal)
 
-```text
-chrome://extensions
+1. Download **[`releases/glass-new-tab-v1.3.0.zip`](releases/glass-new-tab-v1.3.0.zip)**
+2. **Unzip it.** You get a folder called `glass-new-tab` with `manifest.json` inside.
+3. Open `chrome://extensions` (or `edge://extensions`).
+4. Turn on **Developer mode** — top right corner.
+5. Click **Load unpacked** and pick the unzipped `glass-new-tab` folder.
+6. Open a new tab. Done.
+
+### 2. From a clone (to read or change the code)
+
+```bash
+git clone https://github.com/tejasrajm46-strix/awesome_chrome_extension.git
 ```
 
-For Microsoft Edge:
+Then `chrome://extensions` → **Developer mode** → **Load unpacked** → choose the cloned
+folder. The repository root *is* the extension: `manifest.json`, `newtab.html`, `css/`,
+`js/` and `assets/` are all at the top level, so there is nothing to build and no
+`npm install` step.
 
-```text
-edge://extensions
+> **After editing any file**, press the reload ↻ button on the extension card, then
+> reload the new tab page. The extension is plain ES5 JavaScript and plain CSS — no
+> bundler, no framework, no dependencies.
+
+---
+
+## Features
+
+### 🗂️ Bookmarks that scale
+
+| | |
+|---|---|
+| **Pages** | Split the library by context — Home, Work, Reading List. Create, rename (right-click a pill) and delete them without touching their neighbours. |
+| **Boards** | Ten boards ship built-in per page, each showing its own bookmark count. Right-click to rename or delete. |
+| **Scrolling panel** | The bookmark list scrolls **inside** the panel, so a library of 500 behaves like one of 10 — and a panel you resized by hand can never spill its cards onto the page. |
+| **Scrolling page and board rows** | Never a clipped pill: the rows scroll with the wheel and with `‹` `›` buttons that appear only while they overflow. The `+` pill adds a page or a board on the spot. |
+| **Search** | Filter by title, URL, description and #tag, with an **Exact** toggle for field-exact matching. Scope it to All pages, This page, This board, Favorites or Recently visited. |
+| **Sort** | Custom order, Recently Added, A–Z or Most Used (per-bookmark usage is counted locally). |
+| **Cards your way** | Three sizes, three shapes — rounded, squared-off or capsule — and a 2–6 column stepper, all in the toolbar and mirrored by the sliders in Settings. |
+| **Drag and drop** | Move a bookmark between boards or between pages, and reorder Favorites by dragging. |
+| **Favorites, Trash, Undo** | Star a bookmark, delete to a 30-day Trash you can restore from, and step back through `Ctrl`/`⌘`+`Z` (with redo). |
+| **Import / export** | Export JSON backup, Netscape HTML or CSV; import any of those, or import straight from Chrome's own bookmarks. |
+| **Quick save** | One keystroke (`Ctrl`/`⌘`+`Shift`+`Y`), the toolbar button, or a right-click → *Save to Glass New Tab*. |
+| **Privacy mode** | Blur every bookmark title until you hover. |
+| **Live counts** | A quiet line under the list — `34 bookmarks · All pages` — so a scrolled list never reads as a lost one. |
+
+### 🕐 Around the bookmarks
+
+| | |
+|---|---|
+| **Clock** | 12/24-hour, live seconds, and a greeting that follows the day. |
+| **Search** | Google, Bing, DuckDuckGo, Brave, Yahoo, Ecosia or your own URL template, with live suggestions and `Ctrl`/`⌘`+`K` to focus. |
+| **Quote** | One line a day, rotating from a local list — no network call. |
+
+### 🎨 Make it yours
+
+- **Themes** — Light, Glass and Dark.
+- **Eight accent colours**, applied across the whole dashboard.
+- **Backgrounds** — any image or a looping video, stored locally in IndexedDB (no upload).
+- **Freeform layout** — hit **Customize**, then drag widgets anywhere and pull their
+  edges or corners to resize. Arrangements are remembered **per screen size class**
+  (compact / wide / large), so a laptop layout never fights a monitor one. There is an
+  auto-arrange toggle, widget shapes (soft, square, capsule), keyboard resizing with the
+  arrow keys, and a reset that clears the arrangement and nothing else.
+
+### 🔒 Privacy
+
+- No account, no sign-in, no analytics, no telemetry, no remote code.
+- Everything — bookmarks, layout, theme, background — is in `localStorage` / IndexedDB
+  on your machine, under your Chrome profile.
+- The only network requests are the ones you ask for: search suggestions, favicon images
+  for your own bookmarks, and the UI font. Block any of them and the extension still
+  works, with a letter fallback in place of favicons.
+- `bookmarks` is an **optional** permission, requested only when you press *Import Chrome*.
+
+---
+
+## Screenshots
+
+### First run
+
+<div align="center">
+  <img src="docs/first-run.jpg" alt="A brand-new install: one page, ten built-in boards and the six starter bookmarks" width="100%" />
+  <sub>What a fresh install shows — ten boards ready, six starter bookmarks, nothing to configure.</sub>
+</div>
+
+### The panel, up close
+
+<div align="center">
+  <img src="docs/bookmark-panel.jpg" alt="The bookmarks panel: page pills, board pills with counts, search with Exact toggle, scope and sort selectors, card size, card shape and column controls" width="70%" />
+  <sub>Pages, boards with counts, search with scope and sort, and the card size / shape / column controls.</sub>
+</div>
+
+---
+
+## Keyboard shortcuts
+
+| Keys | Does |
+|---|---|
+| `Ctrl`/`⌘` + `K` | Focus the bookmark search |
+| `Ctrl`/`⌘` + `B` | Jump to Favorites |
+| `Ctrl`/`⌘` + `Z` | Undo |
+| `Ctrl`/`⌘` + `Shift` + `Z` | Redo |
+| `Ctrl`/`⌘` + `Shift` + `Y` | Quick-save the page you are on |
+| `←` `→` `Home` `End` | Move between page and board pills |
+| `↑` `↓` `←` `→` (Customize mode) | Resize the selected widget; hold `Shift` to move it |
+| `Esc` | Close a modal, leave Customize mode |
+
+---
+
+## Files
+
 ```
-
-3. Enable **Developer mode**.
-4. Click **Load unpacked**.
-5. Select the extension folder:
-
-```text
-my-extensio-2
-```
-
-6. Open a new browser tab and enjoy your new dashboard.
-
----
-
-## 📦 Installing From a Packaged Release
-
-If you download a packaged ZIP from a GitHub Release:
-
-1. Download the ZIP.
-2. Extract the ZIP to a folder.
-3. Open `chrome://extensions` or `edge://extensions`.
-4. Enable **Developer mode**.
-5. Click **Load unpacked**.
-6. Select the extracted extension folder.
-
-> ⚠️ **Important:** Do not include, publish, or share the `.pem` signing key.
-
----
-
-# 🔐 Permissions
-
-The extension uses only the permissions required for its functionality.
-
-| Permission      | Purpose                                                                   |
-| --------------- | ------------------------------------------------------------------------- |
-| `storage`       | Save settings, preferences, bookmarks, tasks, notes, and other local data |
-| `history`       | Display recently visited pages                                            |
-| `notifications` | Send reminder notifications                                               |
-
-The extension is designed around a **local-first architecture**, minimizing the need for external services.
-
----
-
-# 📁 Project Structure
-
-```text
-my-extensio-2/
-│
-├── manifest.json
-├── newtab.html
-│
+awesome_chrome_extension/
+├── manifest.json              Manifest V3: name, permissions, icons, new-tab override
+├── newtab.html                The dashboard markup — the only page
 ├── css/
-│   └── style.css
-│
+│   └── style.css              All styling: themes, glass, cards, layout, responsive rules
 ├── js/
-│   ├── app.js          # Main application orchestrator
-│   ├── layout.js       # Widget layout and resizing
-│   ├── pomodoro.js     # Pomodoro timer
-│   ├── background.js   # Background image/video + storage
-│   ├── clock.js        # Clock and greeting
-│   ├── search.js       # Multi-engine search
-│   ├── bookmarks.js    # Bookmarks + drag-and-drop
-│   ├── calendar.js     # Monthly calendar
-│   ├── todo.js         # Task manager
-│   ├── notes.js        # Notepad
-│   ├── reminders.js    # Reminders + notifications
-│   ├── history.js      # Recently visited pages
-│   └── settings.js     # Settings panel
-│
+│   ├── storage.js             localStorage + IndexedDB wrappers
+│   ├── layout.js              Freeform widget layout: move, resize, snapping, size classes
+│   ├── background.js          Wallpaper upload / video / reset
+│   ├── clock.js               Clock and greeting
+│   ├── search.js              Search engines, suggestions, custom URL templates
+│   ├── bookmarks.js           First-run seed data
+│   ├── workspace.js           Pages, boards, cards, search, sort, import/export, Trash
+│   ├── settings.js            Settings panel and appearance preferences
+│   ├── app.js                 Boot sequence
+│   └── service-worker.js      Context menus, toolbar button, quick-save tab
 ├── assets/
-│   └── icons/
-│       ├── icon16.png
-│       ├── icon48.png
-│       └── icon128.png
-│
-└── README.md
+│   ├── icons/                 Extension icons 16 / 32 / 48 / 128 px
+│   └── brand/                 Logo SVG variants and PNG exports
+├── docs/                      Screenshots, banners and the palette used in this README
+└── releases/
+    └── glass-new-tab-v1.3.0.zip   The same extension, ready to unzip and load
 ```
 
 ---
 
-# 🎥 Video Background
+## Brand
 
-One of the key features of the dashboard is support for **custom video backgrounds**.
+<div align="center">
+  <img src="assets/brand/png/logo-512.png" alt="The Glass New Tab mark: a red rounded tile with a bookmark cut clean through it" width="128" />
+</div>
 
-Because browser `localStorage` is not suitable for storing large binary files, video backgrounds are stored using **IndexedDB**.
+The mark is one shape in one colour: a rounded tile with a **bookmark cut clean through
+it**. The bookmark is a real hole, not a white shape drawn on top — which is why the same
+file works on light, dark, photographic and one-colour backgrounds, and why it reads at
+16 px in a browser toolbar without turning into a smudge.
 
-### How it works
+<div align="center">
+  <img src="docs/palette.png" alt="The palette: Red 100 #E4665F, Red 300 #E0483C, Red 600 #BA362A, Red 900 #822319" width="100%" />
+</div>
 
-```text
-User selects video
-       ↓
-Video stored in IndexedDB
-       ↓
-Blob retrieved when dashboard loads
-       ↓
-Object URL created
-       ↓
-Video displayed as background
-       ↓
-Autoplay + Muted + Loop
-```
+| Name | HEX | Where it is used |
+|---|---|---|
+| Red 100 | `#E4665F` | Tints, hover states, badges, dark-mode accents |
+| Red 300 | `#E0483C` | **Primary** — the mark, headings, the main call to action |
+| Red 600 | `#BA362A` | Pressed states, deeper accents, kickers |
+| Red 900 | `#822319` | Ink, rules, dark surfaces |
 
-Videos can be stored locally and played directly in the new-tab dashboard without requiring a backend server.
+Red carries the meaning the brief asked for — energy, power, excitement — and it keeps
+the mark clear of the blue that nearly every bookmark and tab manager reaches for. The
+dashboard's own accent colour is yours to change in Settings; the palette above is the
+brand layer: the logo, this README and the project's artwork.
 
-> **Recommended maximum video size: ~50 MB**
+Type is **Inter** (SIL Open Font License). The mark was designed with a logo-design
+skill's process rather than by taste alone: three concepts explored in one colour, tested
+at 16 / 32 / 48 / 128 px and on dark, the weakest two discarded, then the survivor built
+out into a variant set.
 
-Supported formats include:
+<details>
+<summary><b>Logo files in the repository</b></summary>
 
-* MP4
-* WEBM
+| File | Use |
+|---|---|
+| `assets/brand/glass-new-tab-logo.svg` | Master mark, brand red, with clear space |
+| `assets/brand/glass-new-tab-logo-tight.svg` | Tight variant — used for the toolbar icons |
+| `assets/brand/glass-new-tab-logo-black.svg` / `…-white.svg` | One-colour versions for print and dark backgrounds |
+| `assets/brand/glass-new-tab-logo-mono-822319.svg` | One-colour in the deep red |
+| `assets/brand/glass-new-tab-app-icon.svg`, `…-square.svg` | Store, avatar and social masters |
+| `assets/brand/png/` | PNG exports at 512 px |
+| `docs/logo-concepts.png` | The three concepts this mark was chosen from, at real sizes |
 
----
-
-# 💾 Local-First Architecture
-
-The extension is designed to keep the core experience local.
-
-```text
-                    ┌──────────────────────┐
-                    │   New Tab Dashboard  │
-                    └──────────┬───────────┘
-                               │
-          ┌────────────────────┼────────────────────┐
-          ↓                    ↓                    ↓
-      LocalStorage          IndexedDB         Chrome APIs
-          │                    │                    │
-          ↓                    ↓                    ↓
-     Preferences          Video Files       History / Alerts
-     Tasks / Notes
-     Bookmarks
-     Settings
-```
-
-This allows the dashboard to remain lightweight and minimizes dependency on external servers.
+</details>
 
 ---
 
-# ⚡ Core Technologies
+## Permissions, and why
 
-Built using standard web technologies and browser APIs:
-
-* **HTML5**
-* **CSS3**
-* **JavaScript**
-* **Chrome Extension APIs**
-* **Chrome History API**
-* **Chrome Notifications API**
-* **Chrome Storage API**
-* **IndexedDB**
-* **Local Storage**
-
-No traditional backend is required for the core dashboard.
+| Permission | Why |
+|---|---|
+| `storage` | Your bookmarks, layout, theme and preferences — locally. |
+| `tabs` | To open a saved bookmark in a new tab, and to quick-save the page you are on. |
+| `contextMenus` | The right-click *Save to Glass New Tab* item. |
+| `bookmarks` *(optional)* | Requested only when you press *Import Chrome*. Decline and everything else still works. |
+| `host_permissions` (search + `google.com/s2/favicons`) | Fetch search suggestions for the engine you picked, and draw favicons for your own bookmarks. |
 
 ---
 
-# 🎯 Designed For
+## FAQ
 
-Whether you're:
+<details>
+<summary><b>Where is my data?</b></summary>
 
-* 👨‍💻 Coding
-* 📚 Studying
-* 💼 Working
-* 📝 Taking notes
-* ✅ Managing tasks
-* 📅 Planning your day
-* 🔎 Browsing the web
-* 🎯 Working through focused sessions
+In your Chrome profile: `localStorage` for bookmarks, layout and preferences, IndexedDB
+for uploaded video wallpapers. Uninstalling the extension removes it. Use **⋯ → Export
+backup** for a JSON file you can import or inspect.
+</details>
 
-your new tab becomes a **personal command center**.
+<details>
+<summary><b>My bookmarks look empty after switching to a new profile or browser.</b></summary>
 
----
+Chrome profiles have separate storage. Import a JSON backup with **⋯ → Import file**, or
+**⋯ → Import Chrome** to pull the current profile's bookmarks in.
+</details>
 
-# 🌟 Vision
+<details>
+<summary><b>Favicons are showing as letters instead of icons.</b></summary>
 
-Most new-tab pages are simply empty spaces.
+Favicons come from Google's favicon service, which needs network access and the host
+permission above. Offline, or with the permission removed, the card falls back to the
+first letter of the title — by design, never a broken image.
+</details>
 
-**Premium New Tab Dashboard** turns that space into something useful.
+<details>
+<summary><b>Do the Pages and Boards share bookmarks?</b></summary>
 
-> ### **Your browser. Your workspace. Your new tab.**
+No. A page owns its boards and its bookmarks, so *Work* and *Home* can both hold a board
+called *Clients* without interfering. Duplicate URLs are refused **within one board**.
+</details>
 
-The goal is to create a new-tab experience that combines **beauty, productivity, customization, and simplicity** without overwhelming the user.
+<details>
+<summary><b>Can I get the whole library on one screen?</b></summary>
 
----
-
-# 🚀 Future Improvements
-
-Possible future enhancements include:
-
-* ☁️ Optional cloud synchronization
-* 📊 Productivity statistics
-* 🎵 Background music controls
-* 🌤️ Weather widget
-* 📌 More dashboard layouts
-* 🔗 Additional search engines
-* 📱 Improved responsive/mobile experience
-* 🎨 More customization options
-* 🔄 Backup and restore settings
-* 🧩 Additional productivity widgets
+Search with the scope set to **All pages**, or set the column stepper to 5–6. The list
+scrolls inside the panel rather than growing the page.
+</details>
 
 ---
 
-# ❤️ Contributing
+## Known limitations
 
-Contributions, ideas, bug reports, and feature suggestions are welcome.
+Honest list, so nothing surprises you:
 
-If you have an idea that could make the dashboard better, feel free to open an issue or submit a pull request.
-
----
-
-# ⭐ Support the Project
-
-If you find **Premium New Tab Dashboard** useful:
-
-⭐ Star the repository
-🐛 Report bugs
-💡 Suggest features
-🔀 Submit improvements
-
-Every contribution helps make the project better.
+- **No sync.** Bookmarks live in one browser profile; export/import is the bridge.
+- **Cards truncate at 4+ columns in a narrow panel.** The panel is sized as a fraction of
+  your screen; if you keep it narrow, use 2–3 columns for full titles.
+- **Layout is per screen-size class**, so a window dragged between size classes is
+  re-arranged from that class's profile rather than scaled.
+- **Keyboard navigation stops at the pill rows** — cards are reachable with `Tab`, but
+  there is no arrow-key traversal inside the grid yet.
+- Chrome only exposes *Allow in incognito* to extensions you enable it for; the incognito
+  open option will tell you if it is off.
 
 ---
 
-## ✨ Premium New Tab Dashboard
+## Contributing
 
-**Search. Organize. Plan. Focus. Create.**
+Issues and pull requests are welcome. There is no build step: edit `js/` or `css/`, reload
+the extension card in `chrome://extensions`, reload the new tab. If you change behaviour,
+say in the PR what you loaded it in and what you saw — screenshots of the panel are the
+easiest review.
 
-### 🌌 Make every new tab count.
+---
+
+<div align="center">
+  <img src="assets/brand/png/logo-mono-822319-512.png" alt="" width="34" />
+  <br />
+  <b>Glass New Tab</b> — bookmark pages and boards for your new tab.
+  <br />
+  <sub>MIT licensed · Built with the logo-design skill · Inter by Rasmus Andersson (OFL)</sub>
+</div>

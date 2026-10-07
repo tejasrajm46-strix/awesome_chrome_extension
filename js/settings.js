@@ -18,6 +18,7 @@ window.App.Settings = (function () {
   function applyMode() {
     var mode = App.Storage.get('theme-mode', 'glass');
     document.body.setAttribute('data-mode', mode);
+    document.querySelectorAll('.mode-btn').forEach(function (button) { button.classList.toggle('active', button.dataset.mode === mode); });
     document.querySelectorAll('.mode-btn').forEach(function (b) {
       b.classList.toggle('active', b.dataset.mode === mode);
     });
@@ -34,6 +35,7 @@ window.App.Settings = (function () {
     document.querySelectorAll('.accent-btn').forEach(function (b) {
       b.classList.toggle('active', b.dataset.accent === color);
     });
+    document.querySelectorAll('.accent-btn[data-accent="' + color + '"]').forEach(function (button) { button.classList.add('active'); });
   }
 
   function applyClockFormat() {
@@ -50,6 +52,90 @@ window.App.Settings = (function () {
     });
   }
 
+  function initCustomSearch() {
+    var input = document.getElementById('custom-search-url');
+    if (!input) return;
+    input.value = App.Storage.get('custom-search-url', '');
+    input.addEventListener('change', function () {
+      var value = input.value.trim();
+      if (!value) { App.Storage.del('custom-search-url'); return; }
+      try {
+        var template = new URL(value.replace(/%s/g, 'query'));
+        if ((template.protocol !== 'http:' && template.protocol !== 'https:') || value.indexOf('%s') < 0) throw new Error('Invalid template');
+        App.Storage.set('custom-search-url', value);
+      } catch (error) {
+        input.value = App.Storage.get('custom-search-url', '');
+        alert('Use an http(s) search URL with %s where the search query belongs.');
+      }
+    });
+  }
+
+  function initBookmarkPreferences() {
+    var prefs = App.Storage.get('bookmark-preferences', {});
+    var controls = [
+      { id: 'columns-control', key: 'columns', variable: '--bookmark-columns', suffix: '' },
+      { id: 'transparency-control', key: 'transparency', variable: '--card-opacity', suffix: '%' },
+      { id: 'blur-control', key: 'blur', variable: '--glass-blur', suffix: 'px' },
+      { id: 'radius-control', key: 'radius', variable: '--card-radius', suffix: 'px' },
+      { id: 'icon-size-control', key: 'iconSize', variable: '--bookmark-icon-size', suffix: 'px' }
+    ];
+    function applyControl(item, input) {
+      var value = parseInt(input.value, 10);
+      var variableValue = item.key === 'transparency' ? value / 100 : item.key === 'blur' ? 'blur(' + value + 'px)' : value + item.suffix;
+      var outputIds = { columns: 'columns-value', transparency: 'transparency-value', blur: 'blur-value', radius: 'radius-value', iconSize: 'icon-size-value' };
+      var output = document.getElementById(outputIds[item.key]);
+      if (output) output.textContent = value + item.suffix;
+      prefs[item.key] = value;
+      if (item.key === 'columns') {
+        var root = document.documentElement;
+        root.style.setProperty('--bookmark-columns', value);
+        var effective = Math.min(value, window.innerWidth <= 520 ? 1 : window.innerWidth <= 760 ? 2 : window.innerWidth <= 1050 ? 3 : value);
+        root.style.setProperty('--visible-bookmark-columns', effective);
+      } else if (item.key === 'transparency') {
+        document.documentElement.style.setProperty('--card-opacity', String(value / 100));
+      } else if (item.key === 'blur') {
+        document.documentElement.style.setProperty('--glass-blur', 'blur(' + value + 'px)');
+      } else if (item.key === 'radius') {
+        document.documentElement.style.setProperty('--card-radius', value + 'px');
+      } else if (item.key === 'iconSize') {
+        document.documentElement.style.setProperty('--bookmark-icon-size', value + 'px');
+      }
+    }
+    controls.forEach(function (item) {
+      var input = document.getElementById(item.id); if (!input) return;
+      if (typeof prefs[item.key] === 'number') input.value = prefs[item.key];
+      applyControl(item, input);
+      input.addEventListener('input', function () {
+        applyControl(item, input);
+        // The bookmark toolbar edits the same record, so the write merges into the
+        // stored object instead of replacing it with this panel's older copy.
+        var latest = App.Storage.get('bookmark-preferences', {}) || {};
+        latest[item.key] = prefs[item.key];
+        // Corner radius has a shape switch of its own in the toolbar; dragging
+        // this slider makes the shape a custom one.
+        if (item.key === 'radius') latest.cardShape = 'custom';
+        App.Storage.set('bookmark-preferences', latest);
+        // The toolbar owns the shape and column controls, so it re-reads the
+        // record and redraws them from it.
+        if (App.Workspace && App.Workspace.refreshCardPreferences) App.Workspace.refreshCardPreferences();
+      });
+    });
+    window.addEventListener('resize', function () {
+      // Read the live record rather than this panel's copy: the toolbar's column
+      // stepper may have changed it since this closure was built.
+      var stored = App.Storage.get('bookmark-preferences', {}) || {};
+      var value = parseInt(stored.columns, 10) || 4;
+      var effective = Math.min(value, window.innerWidth <= 520 ? 1 : window.innerWidth <= 760 ? 2 : window.innerWidth <= 1050 ? 3 : value);
+      document.documentElement.style.setProperty('--visible-bookmark-columns', effective);
+    });
+    var descriptions = document.getElementById('description-toggle');
+    if (descriptions) {
+      descriptions.checked = App.Storage.get('bookmark-descriptions', false);
+      document.body.classList.toggle('hide-bookmark-descriptions', !descriptions.checked);
+      descriptions.addEventListener('change', function () { document.body.classList.toggle('hide-bookmark-descriptions', !descriptions.checked); App.Storage.set('bookmark-descriptions', descriptions.checked); });
+    }
+  }
+
   function init() {
     overlay = document.getElementById('settings-overlay');
     openBtn = document.getElementById('btn-settings');
@@ -62,6 +148,8 @@ window.App.Settings = (function () {
     applyClockFormat();
     applySearchEngine();
     applyWidgetVisibility();
+    initBookmarkPreferences();
+    initCustomSearch();
 
     openBtn.addEventListener('click', function () { overlay.classList.remove('hidden'); });
     closeBtn.addEventListener('click', function () { overlay.classList.add('hidden'); });
@@ -91,37 +179,11 @@ window.App.Settings = (function () {
 
     document.querySelectorAll('.engine-pick-btn').forEach(function (b) {
       b.addEventListener('click', function () {
-        App.Storage.set('search-engine', b.dataset.engine);
+        if (App.Search && App.Search.setEngine) App.Search.setEngine(b.dataset.engine);
+        else App.Storage.set('search-engine', b.dataset.engine);
         applySearchEngine();
-        if (App.Search && App.Search.init) App.Search.init();
       });
     });
-
-    document.querySelectorAll('.pomodoro-set-btn').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var duration = b.dataset.duration;
-        var breakTime = b.dataset.break;
-        if (duration) {
-          App.Pomodoro.setSetting('workMinutes', parseInt(duration, 10));
-        }
-        if (breakTime) {
-          App.Pomodoro.setSetting('breakMinutes', parseInt(breakTime, 10));
-        }
-        // Visual feedback
-        document.querySelectorAll('.pomodoro-set-btn').forEach(function (x) { x.classList.remove('active'); });
-        b.classList.add('active');
-      });
-    });
-    // Highlight active pomodoro duration on open
-    (function applyPomodoroActive() {
-      var s = App.Pomodoro.getSettings();
-      document.querySelectorAll('.pomodoro-set-btn[data-duration]').forEach(function (b) {
-        b.classList.toggle('active', parseInt(b.dataset.duration,10) === s.workMinutes);
-      });
-      document.querySelectorAll('.pomodoro-set-btn[data-break]').forEach(function (b) {
-        b.classList.toggle('active', parseInt(b.dataset.break,10) === s.breakMinutes);
-      });
-    })();
 
     document.querySelectorAll('[data-toggle]').forEach(function (cb) {
       cb.addEventListener('change', function () {

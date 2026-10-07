@@ -1,4 +1,15 @@
-*.pem
+# The packaged extension IS shipped in this repository: releases/*.zip is what
+# "download -> unzip -> Load unpacked" points at, so it must not be ignored. Only the
+# throwaway staging directory the ZIP is built from is.
+/releases/build/
+
+# Packed extension artifacts and signing material
 *.crx
-*.zip
+*.pem
+*.key
+
+# OS and editor noise
 .DS_Store
+Thumbs.db
+desktop.ini
+*.swp

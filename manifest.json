@@ -1,26 +1,45 @@
 {
   "manifest_version": 3,
-  "name": "Premium New Tab Dashboard",
-  "version": "1.1.0",
-  "description": "A premium glassmorphism new tab dashboard with widgets, customizable backgrounds, and productivity tools.",
+  "name": "Glass New Tab — Bookmarks",
+  "version": "1.3.0",
+  "description": "A free, private, customizable new-tab dashboard centered on bookmark pages and boards.",
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },
   "permissions": [
     "storage",
-    "history",
-    "notifications"
+    "tabs",
+    "contextMenus"
+  ],
+  "optional_permissions": [
+    "bookmarks"
   ],
   "host_permissions": [
+    "https://www.google.com/*",
     "https://clients1.google.com/*",
     "https://suggestqueries.google.com/*",
-    "https://www.google.com/*",
     "https://api.bing.com/*",
     "https://duckduckgo.com/*",
     "https://search.brave.com/*"
   ],
+  "action": {
+    "default_title": "Save current page to Glass New Tab"
+  },
+  "background": {
+    "service_worker": "js/service-worker.js"
+  },
+  "commands": {
+    "quick-save-current-tab": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Quick save the current page"
+    }
+  },
   "icons": {
     "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
     "48": "assets/icons/icon48.png",
     "128": "assets/icons/icon128.png"
   }

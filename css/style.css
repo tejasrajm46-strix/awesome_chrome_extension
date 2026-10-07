@@ -46,7 +46,7 @@
 }
 [data-mode="glass"] .bg-overlay{background:rgba(0,0,0,0.15)}
 
-html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text-primary);background:#0a0a14}
+html,body{min-height:100%;height:100%;overflow-y:auto;overflow-x:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text-primary);background:#0a0a14}
 
 .bg-layer{position:fixed;inset:0;z-index:0;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e)}
 .bg-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -57,12 +57,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .icon-btn:hover{color:var(--text-primary);background:rgba(255,255,255,0.08)}
 
 /* ===== Dashboard Grid ===== */
-.dashboard{position:relative;z-index:2;display:grid;grid-template-columns:1fr 320px;height:100vh;padding:32px 36px 20px;gap:24px;overflow:visible}
-.left-col{grid-column:1;display:flex;flex-direction:column;min-width:0;overflow:visible;position:relative;z-index:5}
-.widgets-panel{grid-column:2;display:flex;flex-direction:column;gap:12px;overflow-y:auto;overflow-x:visible;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent;position:relative;z-index:3}
-.widgets-panel::-webkit-scrollbar{width:3px}
-.widgets-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:10px}
-.center-spacer{flex:1;min-height:80px}
+.dashboard{position:relative;z-index:2;display:grid;grid-template-columns:1fr 320px;min-height:100vh;padding:32px 36px 20px;gap:24px;overflow:visible;box-sizing:border-box}
 
 /* ===== Clock ===== */
 .clock-block{margin-bottom:24px}
@@ -108,129 +103,26 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 
 /* ===== Bookmarks ===== */
 .bookmarks-widget{margin-top:auto}
-.widget-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.widget-header h3{font-size:13px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center}
-.widget-action-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:var(--text-secondary);font-size:11px;cursor:pointer;padding:4px 10px;border-radius:8px;font-family:inherit;transition:0.2s}
-.widget-action-btn:hover{background:var(--accent-glow);color:var(--accent);border-color:var(--accent-glow)}
 .bookmarks-grid{display:flex;flex-wrap:wrap;gap:10px}
 .bm-item{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:var(--text-secondary);cursor:pointer;padding:10px 14px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);transition:all 0.25s;min-width:74px;position:relative}
 .bm-item:hover{background:rgba(255,255,255,0.1);color:var(--text-primary);transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.2)}
 [data-mode="light"] .bm-item{background:rgba(255,255,255,0.5);border-color:rgba(0,0,0,0.06)}
 [data-mode="light"] .bm-item:hover{background:rgba(255,255,255,0.8)}
 .bm-item.dragging{opacity:0.4;transform:scale(0.95)}
-.bm-item.drag-over{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-glow)}
+
 .bm-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;overflow:hidden}
 .bm-icon img{width:28px;height:28px;border-radius:4px}
 .bm-name{font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70px;text-align:center}
-.bm-remove{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);border:none;color:rgba(255,255,255,0.4);width:16px;height:16px;border-radius:50%;font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;transition:0.2s}
-.bm-edit{position:absolute;top:4px;right:24px;background:rgba(0,0,0,0.6);border:none;color:rgba(255,255,255,0.4);width:16px;height:16px;border-radius:50%;font-size:9px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;transition:0.2s}
-.bm-item:hover .bm-remove,.bm-item:hover .bm-edit{display:flex}
-.bm-remove:hover{color:#ff6b6b;background:rgba(255,0,0,0.3)}
-.bm-edit:hover{color:var(--accent);background:rgba(91,141,239,0.3)}
 
 /* ===== Widget base ===== */
-.widget{padding:16px;flex-shrink:0;transition:transform 0.3s, box-shadow 0.3s, border-color 0.3s, opacity 0.3s;overflow:hidden;contain:layout style}
-.widget.resizing{transition:none !important;user-select:none}
-.resizing-active{user-select:none !important;cursor:se-resize !important}
-.resizing-active *{user-select:none !important}
-/* Modular resize handles - discrete, show on hover or customize mode */
-.resize-handle{position:absolute;z-index:11;opacity:0;transition:opacity 0.18s, background 0.18s, border-color 0.18s;pointer-events:auto}
-.widget:hover .resize-handle, .customize-mode .resize-handle, .widget.resizing .resize-handle{opacity:1}
-.resize-handle-e{top:12px;right:1px;bottom:12px;width:8px;cursor:ew-resize;border-radius:999px;background:transparent;border:1px solid transparent}
-.resize-handle-e:hover,.resize-handle-e:active{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12)}
-.resize-handle-s{left:12px;right:12px;bottom:1px;height:8px;cursor:ns-resize;border-radius:999px;background:transparent;border:1px solid transparent}
-.resize-handle-s:hover,.resize-handle-s:active{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12)}
-.resize-handle-se{right:4px;bottom:4px;width:14px;height:14px;cursor:se-resize;border-radius:3px;background:linear-gradient(135deg, transparent 50%, var(--text-dim) 50%);background-size:6px 6px;background-repeat:no-repeat;background-position:bottom right;opacity:0.35}
-.widget:hover .resize-handle-se{opacity:0.9}
-.resize-handle-se:hover{opacity:1 !important;background-color:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12)}
-.todo-add-btn:disabled{opacity:0.45;cursor:not-allowed;transform:none}
-/* Prevent handles from stealing clicks from inner controls when not resizing */
-.widget .todo-form,.widget .reminder-form,.widget .pomodoro-controls,.widget .bookmark-grid{position:relative;z-index:1}
-/* Draggable widgets */
-.widget.dragging{opacity:0.45;transform:scale(0.97) rotate(1deg);border:2px dashed var(--accent);z-index:1000}
-.widget.drag-over{outline:2px dashed var(--accent);outline-offset:2px}
-.widget-drop-placeholder{box-sizing:border-box;border:2px dashed var(--accent);border-radius:var(--radius);background:var(--accent-glow);opacity:.7;flex:0 0 auto;min-height:140px;transition:height .15s,width .15s}
-.customize-mode .drag-handle{touch-action:none}
-.widget-dragging{cursor:grabbing !important}
-.drag-handle{cursor:grab;display:flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:6px;color:var(--text-dim);opacity:0;transition:opacity 0.2s,background 0.2s;margin-left:6px;flex-shrink:0}
-.widget:hover .drag-handle,.customize-mode .drag-handle{opacity:1}
-.drag-handle:active{cursor:grabbing}
-.drag-handle:hover{background:rgba(255,255,255,0.08);color:var(--text-secondary)}
-.customize-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:900;display:flex;align-items:center;gap:12px;padding:10px 18px;background:rgba(18,18,28,0.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12);border-radius:999px;box-shadow:0 12px 40px rgba(0,0,0,0.5);pointer-events:none}
-.customize-bar>*{pointer-events:auto}
-.customize-bar .bar-label{font-size:12px;font-weight:600;color:var(--text-secondary)}
-.customize-bar .bar-btn{padding:6px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:var(--text-primary);font-size:12px;font-weight:600;cursor:pointer}
-.customize-bar .bar-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.customize-mode .widget{cursor:move}
-.customize-mode .widgets-panel,.customize-mode .left-col{outline:1px dashed rgba(255,255,255,0.08);outline-offset:6px;border-radius:var(--radius)}
 
 /* ===== Calendar ===== */
-.cal-nav{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-secondary)}
-.cal-btn{background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:12px;padding:2px 6px;border-radius:6px;transition:0.2s;font-family:inherit}
-.cal-btn:hover{color:var(--text-primary);background:rgba(255,255,255,0.08)}
-.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:9px;color:var(--text-dim);margin:8px 0 4px;font-weight:600}
-.cal-days{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;gap:1px}
-.cal-day{padding:6px 0;border-radius:8px;cursor:pointer;transition:0.15s;color:var(--text-secondary);font-weight:500}
-.cal-day:hover{background:rgba(255,255,255,0.08)}
-[data-mode="light"] .cal-day:hover{background:rgba(0,0,0,0.05)}
-.cal-day.today{background:var(--accent);color:#fff;font-weight:700;box-shadow:0 2px 8px var(--accent-glow)}
-.cal-day.other-month{color:var(--text-dim);opacity:0.5}
 
 /* ===== Todo ===== */
-.todo-form,.reminder-form{display:flex;gap:6px;margin-bottom:8px}
-.todo-form input,.reminder-form input[type="text"]{flex:1;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);border-radius:10px;color:var(--text-primary);font-family:inherit;font-size:12px;padding:8px 12px;outline:none;transition:border-color 0.2s}
-[data-mode="light"] .todo-form input,[data-mode="light"] .reminder-form input[type="text"]{background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.08)}
-.todo-form input:focus,.reminder-form input[type="text"]:focus{border-color:var(--accent)}
-.todo-form input::placeholder,.reminder-form input[type="text"]::placeholder{color:var(--text-dim)}
-.reminder-form input[type="datetime-local"]{width:130px;flex:none;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);border-radius:10px;color:var(--text-secondary);font-family:inherit;font-size:11px;padding:6px 8px;outline:none;color-scheme:dark}
-[data-mode="light"] .reminder-form input[type="datetime-local"]{background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.08);color-scheme:light}
-.todo-add-btn{background:var(--accent);border:none;color:#fff;width:32px;height:32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0}
-.todo-add-btn:hover{background:var(--accent-hover);transform:scale(1.05)}
-.todo-list,.reminder-list{list-style:none;max-height:140px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.06) transparent}
-.todo-list::-webkit-scrollbar,.reminder-list::-webkit-scrollbar{width:2px}
-.todo-list::-webkit-scrollbar-thumb,.reminder-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:10px}
-.todo-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:12px;color:var(--text-secondary);animation:fadeSlideIn 0.2s ease}
-.todo-item:last-child{border-bottom:none}
-.todo-check{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.25s;background:transparent;padding:0;color:transparent;font-size:10px}
-.todo-check:hover{border-color:var(--accent)}
-.todo-check.done{background:var(--success);border-color:var(--success);color:#fff}
-.todo-text{flex:1;word-break:break-word;transition:all 0.2s}
-.todo-text.done{text-decoration:line-through;color:var(--text-dim)}
-.todo-delete{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;padding:0 2px;transition:0.2s;flex-shrink:0;opacity:0}
-.todo-item:hover .todo-delete{opacity:1}
-.todo-delete:hover{color:var(--danger)}
-
-.reminder-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:12px;color:var(--text-secondary);animation:fadeSlideIn 0.2s ease}
-.reminder-item:last-child{border-bottom:none}
-.reminder-item .reminder-info{flex:1}
-.reminder-item .reminder-text{display:block}
-.reminder-item .reminder-date{font-size:10px;color:var(--text-dim)}
-.reminder-item.completed .reminder-text{text-decoration:line-through;color:var(--text-dim)}
-.reminder-check{width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:0.2s;background:transparent;padding:0;color:transparent;font-size:8px}
-.reminder-check.done{background:var(--success);border-color:var(--success);color:#fff}
-.reminder-delete{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:13px;padding:0 2px;transition:0.2s;flex-shrink:0;opacity:0}
-.reminder-item:hover .reminder-delete{opacity:1}
-.reminder-delete:hover{color:var(--danger)}
 
 /* ===== Notes ===== */
-.notes-actions{display:flex;align-items:center;gap:8px}
-.notes-count{font-size:10px;color:var(--text-dim)}
-.widget-notes textarea{width:100%;min-height:80px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:10px;color:var(--text-primary);font-family:inherit;font-size:12px;padding:10px;resize:vertical;outline:none;transition:border-color 0.2s}
-[data-mode="light"] .widget-notes textarea{background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.06)}
-.widget-notes textarea:focus{border-color:var(--accent)}
-.widget-notes textarea::placeholder{color:var(--text-dim)}
 
 /* ===== Recently Visited ===== */
-.recent-list{list-style:none;max-height:140px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.06) transparent}
-.recent-list::-webkit-scrollbar{width:2px}
-.recent-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:10px}
-.recent-item{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:12px;animation:fadeSlideIn 0.2s ease}
-.recent-item:last-child{border-bottom:none}
-.recent-favicon{width:20px;height:20px;border-radius:6px;flex-shrink:0;background:rgba(255,255,255,0.06);padding:2px}
-.recent-item a{flex:1;color:var(--text-secondary);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:0.2s}
-.recent-item a:hover{color:var(--accent)}
-.recent-time{font-size:10px;color:var(--text-dim);flex-shrink:0}
-.recent-empty{font-size:12px;color:var(--text-dim);padding:8px 0;list-style:none}
 
 /* ===== Settings FAB ===== */
 .settings-fab{position:fixed;top:32px;right:36px;z-index:100;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);transition:all 0.3s}
@@ -247,9 +139,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .settings-group{margin-bottom:20px}
 .settings-group h3{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:10px}
 .settings-row{display:flex;gap:6px;flex-wrap:wrap}
-.format-btn,.mode-btn,.engine-pick-btn,.pomodoro-set-btn{padding:6px 14px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text-secondary);font-size:12px;font-family:inherit;cursor:pointer;transition:0.2s}
-.pomodoro-set-btn:hover{background:rgba(255,255,255,0.08);color:var(--text-primary)}
-.pomodoro-set-btn.active{background:var(--accent-glow);color:var(--accent);border-color:var(--accent)}
+.format-btn,.mode-btn,.engine-pick-btn{padding:6px 14px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text-secondary);font-size:12px;font-family:inherit;cursor:pointer;transition:0.2s}
 .format-btn:hover,.mode-btn:hover,.engine-pick-btn:hover{background:rgba(255,255,255,0.08);color:var(--text-primary)}
 .format-btn.active,.mode-btn.active,.engine-pick-btn.active{background:var(--accent-glow);color:var(--accent);border-color:var(--accent)}
 [data-mode="light"] .format-btn,[data-mode="light"] .mode-btn,[data-mode="light"] .engine-pick-btn{background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.08)}
@@ -287,42 +177,432 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .onboard-btn.ghost:hover{color:var(--text-primary)}
 
 /* ===== Pomodoro Timer ===== */
-.pomodoro-container{text-align:center;padding:20px 10px}
-.pomodoro-display{font-size:48px;font-weight:800;color:var(--accent);margin:10px 0;min-width:80px}
-.pomodoro-progress{height:8px;border-radius:4px;background:rgba(255,255,255,0.1);overflow:hidden;margin:10px auto}
-.pomodoro-progress-bar{height:100%;background:var(--accent);width:0%;transition:width 0.1s linear}
-.pomodoro-controls{display:flex;gap:6px;margin-top:12px;justify-content:center}
-.pomodoro-controls .todo-add-btn{width:36px;height:36px;font-size:14px;padding:0}
-.pomodoro-sessions{font-size:11px;color:var(--text-secondary);margin-top:8px}
 
 /* ===== Animations ===== */
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeSlideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 
-.widget{animation:fadeSlideIn 0.4s ease both}
-.widget:nth-child(1){animation-delay:0.05s}
-.widget:nth-child(2){animation-delay:0.1s}
-.widget:nth-child(3){animation-delay:0.15s}
-.widget:nth-child(4){animation-delay:0.2s}
-.widget:nth-child(5){animation-delay:0.25s}
-
 /* ===== Responsive ===== */
 @media(max-width:1100px){
   .dashboard{grid-template-columns:1fr 280px;gap:16px;padding:24px 24px 16px}
-  .clock-time{font-size:60px}
-  .widgets-panel{gap:10px}
+  .clock-time{font-size:64px}
 }
 @media(max-width:900px){
-  .dashboard{grid-template-columns:1fr;padding:16px}
-  .widgets-panel{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+  .dashboard{grid-template-columns:1fr;padding:20px;gap:20px}
   .clock-time{font-size:56px}
   .settings-fab{top:16px;right:16px}
+  #btn-customize{right:66px !important}
 }
 @media(max-width:600px){
-  .widgets-panel{grid-template-columns:1fr}
-  .clock-time{font-size:48px}
+  .clock-time{font-size:42px;letter-spacing:-2px}
+  .clock-row{flex-wrap:wrap}
   .search-wrapper{max-width:100%}
   .quote-block{max-width:100%}
-  .dashboard{padding:12px}
+  .dashboard{padding:14px 14px 24px}
+  .settings-fab{top:12px;right:12px;width:38px;height:38px}
+  #btn-customize{right:56px !important}
+  .bm-item{min-width:64px;padding:8px 10px}
 }
+@media(max-height:720px){
+  .dashboard{padding-top:20px;padding-bottom:16px}
+  .clock-block{margin-bottom:16px}
+  .clock-time{font-size:54px}
+}
+
+/* ===== Bookmark-first responsive dashboard ===== */
+:root{--bookmark-columns:4;--visible-bookmark-columns:var(--bookmark-columns);--card-opacity:.08;--card-radius:16px;--bookmark-icon-size:36px;--glass-blur:blur(18px)}
+html,body{min-height:100%;height:auto;overflow-x:hidden;overflow-y:auto}
+
+.bg-layer{position:fixed;inset:0;background:radial-gradient(ellipse at 10% 6%,rgba(65,79,150,.26),transparent 38%),radial-gradient(ellipse at 90% 88%,rgba(72,52,123,.25),transparent 40%),linear-gradient(135deg,#10121e,#171a2b 54%,#121421)}
+.bg-overlay{background:rgba(9,11,20,.38)}
+.dashboard{position:relative;isolation:isolate;display:block;width:100%;min-height:100vh;height:auto;padding:0;overflow:visible}
+.free-widget{position:absolute;z-index:2;box-sizing:border-box;min-width:0;max-width:calc(100vw - 24px);touch-action:auto;margin:0!important}
+.widget-clock{padding:14px 18px;border:1px solid transparent;border-radius:18px;background:transparent;transition:background .2s,border-color .2s,box-shadow .2s,border-radius .2s}
+.widget-search{z-index:5;width:min(500px,44vw);max-width:calc(100vw - 24px);padding:10px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(18,21,35,.34);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:border-radius .2s,background .2s}
+.widget-search .search-wrapper{max-width:none;margin:0}
+.widget-search .search-form{background:rgba(255,255,255,.055)}
+.freeform-canvas>.widget-clock{text-align:center}
+
+.freeform-canvas>.widget-bookmarks{min-width:0}
+.widget-quote{padding:15px 18px;border:1px solid rgba(255,255,255,.08);border-left:2px solid var(--accent);border-radius:16px;background:rgba(18,21,35,.32);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:border-radius .2s,background .2s}
+
+.widget-edit-mode .free-widget:hover,.free-widget.widget-selected{outline:1px solid var(--accent);outline-offset:4px;box-shadow:0 0 0 4px var(--accent-glow),0 18px 50px rgba(0,0,0,.18)}
+
+.bookmarks-widget{width:auto;min-width:0;max-width:calc(100vw - 24px);margin:0!important;padding:clamp(14px,1.6vw,22px);border-radius:24px;background:rgba(255,255,255,.065);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border-color:rgba(255,255,255,.11)}
+
+.category-tabs{display:flex;align-items:center;gap:6px;margin:0 0 8px;padding:0 0 4px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent}
+
+.bookmark-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:0 0 12px}
+.bookmark-filter{height:42px;display:flex;align-items:center;gap:10px;width:min(420px,55%);padding:0 13px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(5,8,16,.18);color:var(--text-dim)}
+
+.bookmarks-grid{display:grid;grid-template-columns:repeat(var(--visible-bookmark-columns),minmax(0,1fr));gap:12px}
+.bm-item{min-width:0;min-height:74px;display:flex;flex-direction:row;align-items:center;gap:12px;padding:13px;border:1px solid rgba(255,255,255,.09);border-radius:var(--card-radius);background:rgba(255,255,255,var(--card-opacity));box-shadow:0 2px 10px rgba(0,0,0,.06);transition:transform .2s,border-color .2s,background .2s,box-shadow .2s}
+.bm-item:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.19);background:rgba(255,255,255,calc(var(--card-opacity) + .05));box-shadow:0 6px 16px rgba(0,0,0,.12)}
+
+.bm-icon{width:var(--bookmark-icon-size);height:var(--bookmark-icon-size);display:flex;align-items:center;justify-content:center;flex:0 0 var(--bookmark-icon-size);border-radius:12px;background:rgba(255,255,255,.08);overflow:hidden}
+.bm-icon img{width:calc(var(--bookmark-icon-size) * .62);height:calc(var(--bookmark-icon-size) * .62);object-fit:contain;border-radius:5px}
+
+.bm-name{max-width:100%;overflow:hidden;text-align:left;color:var(--text-primary);font-size:13px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;overflow-wrap:anywhere}
+
+.bm-item.dragging{opacity:.4;transform:scale(.98)}
+
+.settings-fab{top:26px;right:clamp(18px,5vw,72px);width:42px;height:42px}
+
+.settings-panel{max-height:min(86vh,800px);max-width:500px;border-radius:20px}
+.settings-header{padding:19px 22px}.settings-header h2{font-size:18px;margin-top:1px}
+.settings-body{padding:20px 22px}.settings-group{margin-bottom:23px}.settings-group h3{font-size:10px}
+
+.modal-input{box-sizing:border-box}.settings-overlay{padding:18px}
+
+[data-mode="light"] .bm-item{border-color:rgba(20,25,45,.09);background:rgba(255,255,255,var(--card-opacity))}
+
+html,body{min-height:100%;height:auto;overflow-x:hidden;overflow-y:auto}
+body{background:#0b0d16}
+.bg-layer{position:fixed;inset:0;background:radial-gradient(ellipse at 10% 6%,rgba(65,79,150,.26),transparent 38%),radial-gradient(ellipse at 90% 88%,rgba(72,52,123,.25),transparent 40%),linear-gradient(135deg,#10121e,#171a2b 54%,#121421)}
+.bg-overlay{background:rgba(9,11,20,.38)}
+.dashboard{position:relative;display:block;min-height:100vh;height:auto;padding:0;overflow:visible}.dashboard.freeform-canvas{padding:0} .freeform-canvas>.free-widget{margin:0;z-index:2}.freeform-canvas>.widget-clock{z-index:3}.freeform-canvas>.widget-search{z-index:10}.freeform-canvas>.widget-bookmarks{z-index:2;box-sizing:border-box}
+.freeform-canvas>.widget-clock{text-align:center}
+.freeform-canvas>.widget-quote{z-index:3}
+.freeform-canvas>.widget-bookmarks{min-width:0}
+@media(min-width:980px){.freeform-canvas>.widget-bookmarks .bookmark-toolbar{align-items:stretch;flex-direction:column}.freeform-canvas>.widget-bookmarks .bookmark-filter{width:100%;min-width:0}.freeform-canvas>.widget-bookmarks .toolbar-options{flex-wrap:wrap;justify-content:flex-start}}
+.clock-block{margin:0;min-width:0}
+.greeting{font-size:clamp(14px,1.4vw,17px);margin-bottom:4px;letter-spacing:.01em}
+.clock-time{font-size:clamp(54px,7vw,88px);letter-spacing:-.065em;line-height:.98}
+.clock-ampm{font-size:clamp(14px,1.6vw,19px);margin-bottom:6px}
+.clock-date{font-size:13px;margin-top:8px}
+.search-wrapper,.quote-block{max-width:none;width:100%;margin:0}
+.search-form{min-height:50px;border-radius:15px;background:rgba(255,255,255,.065)}
+.quote-block{padding:7px 0 7px 14px;border-left-width:2px}
+.quote-text{font-size:13px}
+.bookmarks-widget{width:auto;max-width:calc(100vw - 24px);padding:clamp(14px,1.6vw,22px);margin:0;border-radius:24px;background:rgba(255,255,255,.065);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border-color:rgba(255,255,255,.11)}
+.bookmark-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.eyebrow{display:block;color:var(--accent);font-size:10px;font-weight:700;letter-spacing:.17em;margin-bottom:8px}
+.bookmark-heading h1{font-size:clamp(17px,1.8vw,22px);line-height:1.15;letter-spacing:-.02em}
+.bookmark-actions{display:flex;gap:9px;align-items:center;flex-shrink:0}
+.toolbar-btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 15px;border-radius:12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s,transform .2s;color:var(--text-primary)}
+.toolbar-btn:hover{transform:translateY(-1px)}
+.toolbar-btn.secondary{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.11)}
+.toolbar-btn.secondary:hover{background:rgba(255,255,255,.09)}
+.toolbar-btn.primary{color:#fff;background:var(--accent);border:1px solid var(--accent);box-shadow:0 7px 18px var(--accent-glow)}
+.toolbar-btn.primary:hover{background:var(--accent-hover)}
+.category-tabs{display:flex;align-items:center;gap:6px;margin:0 0 8px;padding:0 0 4px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent}
+.category-tabs::-webkit-scrollbar{height:3px}.category-tabs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:5px}
+.category-tab{display:flex;align-items:center;gap:6px;white-space:nowrap;flex:0 0 auto;padding:7px 12px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.035);color:var(--text-secondary);font-family:inherit;font-size:11.5px;font-weight:600;cursor:pointer;transition:.2s}
+.category-tab:hover,.category-tab.drop-target{background:rgba(255,255,255,.07);color:var(--text-primary)}
+.category-tab.active{color:var(--text-primary);border-color:rgba(255,255,255,.11);background:rgba(255,255,255,.09)}
+.category-count{font-size:9.5px;color:var(--text-dim);min-width:13px;text-align:center}
+.bookmark-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:0 0 12px}
+.bookmark-filter{height:42px;display:flex;align-items:center;gap:10px;width:min(420px,55%);padding:0 13px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(5,8,16,.18);color:var(--text-dim)}
+.bookmark-filter:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.bookmark-filter input{min-width:0;width:100%;border:0;outline:0;background:transparent;color:var(--text-primary);font-family:inherit;font-size:13px}
+.bookmark-filter input::placeholder{color:var(--text-dim)}
+.toolbar-options{display:flex;align-items:center;gap:12px}
+.sort-select{display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:11px}
+.sort-select select{max-width:145px;padding:8px 27px 8px 10px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:rgba(255,255,255,.045);color:var(--text-secondary);font-family:inherit;font-size:12px;outline:0}
+.sort-select option{background:#171a28;color:#f0f0f0}
+.card-size-switch{display:flex;gap:2px;padding:3px;border:1px solid rgba(255,255,255,.09);border-radius:10px;background:rgba(255,255,255,.035)}
+.size-option{width:28px;height:28px;border:0;border-radius:7px;background:transparent;color:var(--text-dim);font-size:15px;cursor:pointer;transition:.2s}
+.size-option:hover,.size-option.active{background:rgba(255,255,255,.1);color:var(--text-primary)}
+.bookmarks-grid{display:grid;grid-template-columns:repeat(var(--visible-bookmark-columns),minmax(0,1fr));gap:12px}
+.bm-item{min-width:0;min-height:74px;display:flex;flex-direction:row;align-items:center;gap:12px;padding:13px;border:1px solid rgba(255,255,255,.09);border-radius:var(--card-radius);background:rgba(255,255,255,var(--card-opacity));box-shadow:0 2px 10px rgba(0,0,0,.06);transition:transform .2s,border-color .2s,background .2s,box-shadow .2s}
+.bm-item:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.19);background:rgba(255,255,255,calc(var(--card-opacity) + .05));box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.bm-link{min-width:0;flex:1;display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none}
+.bm-icon{width:var(--bookmark-icon-size);height:var(--bookmark-icon-size);display:flex;align-items:center;justify-content:center;flex:0 0 var(--bookmark-icon-size);border-radius:12px;background:rgba(255,255,255,.08);overflow:hidden}
+.bm-icon img{width:calc(var(--bookmark-icon-size) * .62);height:calc(var(--bookmark-icon-size) * .62);object-fit:contain;border-radius:5px}
+.bm-fallback{font-size:calc(var(--bookmark-icon-size) * .46);font-weight:700;color:var(--accent)}
+.bm-text{min-width:0;display:flex;flex-direction:column;gap:4px}
+.bm-name{max-width:100%;overflow:hidden;text-align:left;color:var(--text-primary);font-size:13px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;overflow-wrap:anywhere}
+.bm-description{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-dim);font-size:11px;line-height:1.35}
+body.hide-bookmark-descriptions .bm-description{display:none}
+.bm-item.dragging{opacity:.4;transform:scale(.98)}.bm-item.drag-over{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-glow)}
+body[data-card-size="compact"] .bookmarks-grid{gap:8px}
+body[data-card-size="compact"] .bm-item{min-height:54px;padding:8px 10px;gap:8px}
+body[data-card-size="compact"] .bm-icon{border-radius:9px}
+body[data-card-size="compact"] .bm-name{font-size:12px}
+body[data-card-size="compact"] .bm-description{display:none}
+body[data-card-size="large"] .bookmarks-grid{gap:14px}
+body[data-card-size="large"] .bm-item{min-height:105px;padding:17px;gap:15px}
+body[data-card-size="large"] .bm-name{font-size:14px}
+body[data-card-size="large"] .bm-description{font-size:12px}
+.bookmarks-empty{min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text-secondary);text-align:center;font-size:12px}
+.bookmarks-empty strong{font-size:14px;color:var(--text-primary)}.empty-mark{color:var(--accent);font-size:23px}
+.settings-fab{top:26px;right:clamp(18px,5vw,72px);width:42px;height:42px}
+.settings-fab.customize-fab{right:clamp(68px,calc(5vw + 50px),122px);width:auto;height:42px;padding:0 13px;gap:8px;border-radius:13px;color:var(--text-primary);font-family:inherit;font-size:12px;font-weight:600}
+@media(min-width:980px){.settings-fab{top:clamp(18px,4vh,42px);right:clamp(24px,3.2vw,56px)}.settings-fab.customize-fab{right:clamp(92px,calc(3.2vw + 66px),160px)}}
+.settings-fab-secondary{right:clamp(18px,5vw,72px)}
+.settings-fab.customize-fab:hover{transform:translateY(-1px);color:#fff;border-color:var(--accent-glow);background:var(--accent)}
+.settings-panel{max-height:min(86vh,800px);max-width:500px;border-radius:20px}
+.settings-header{padding:19px 22px}.settings-header h2{font-size:18px;margin-top:1px}
+.settings-body{padding:20px 22px}.settings-group{margin-bottom:23px}.settings-group h3{font-size:10px}
+.range-row{display:block;margin:13px 0;color:var(--text-secondary);font-size:12px}
+.range-row>span{display:flex;justify-content:space-between;margin-bottom:7px}.range-row output{color:var(--text-primary);font-variant-numeric:tabular-nums}
+.range-row input{width:100%;accent-color:var(--accent)}
+.live-preview-label{display:flex;align-items:center;gap:8px;margin-top:14px;color:var(--text-dim);font-size:11px}
+.live-preview-label span{width:7px;height:7px;border-radius:50%;background:#51cf66;box-shadow:0 0 10px rgba(81,207,102,.45)}
+.field-label{display:block;color:var(--text-secondary);font-size:12px;margin-bottom:8px}.category-save-btn{margin-top:7px;text-align:center!important}
+.modal-input{box-sizing:border-box}.settings-overlay{padding:18px}
+[data-mode="light"] .bookmarks-widget{background:rgba(255,255,255,.58);border-color:rgba(255,255,255,.7)}
+[data-mode="light"] .bm-item{border-color:rgba(20,25,45,.09);background:rgba(255,255,255,var(--card-opacity))}
+[data-mode="light"] .category-tab.active{background:rgba(255,255,255,.62);border-color:rgba(20,25,45,.09)}
+[data-mode="light"] .bookmark-filter,[data-mode="light"] .sort-select select{background:rgba(255,255,255,.45);border-color:rgba(20,25,45,.1)}
+[data-mode="light"] .sort-select option{background:#fff;color:#222}
+@media(max-width:1050px){:root{--visible-bookmark-columns:min(var(--bookmark-columns),3)}}
+@media(max-width:979px){.freeform-canvas>.widget-bookmarks .bookmark-toolbar{align-items:stretch;flex-direction:column}.freeform-canvas>.widget-bookmarks .bookmark-filter{width:100%;min-width:0}.freeform-canvas>.widget-bookmarks .toolbar-options{flex-wrap:wrap;justify-content:flex-start}}
+@media(max-width:760px){
+  :root{--visible-bookmark-columns:min(var(--bookmark-columns),2)}
+  .dashboard{padding:0}.widget-clock .clock-time{font-size:60px}
+  .widget-search{width:min(500px,90vw)}
+
+  .toolbar-btn{padding:0 12px}
+  .bookmark-toolbar{align-items:stretch;flex-direction:column;gap:10px}.bookmark-filter{width:auto}
+  .toolbar-options{justify-content:space-between}
+  .settings-fab{top:16px;right:16px}.settings-fab-secondary{right:16px}.settings-fab.customize-fab{right:68px}
+}
+@media(max-width:520px){
+  :root{--visible-bookmark-columns:1}
+  .widget-clock .clock-time{font-size:52px}
+  .search-form{padding-left:11px;gap:5px}.search-engine-pill{padding:6px 7px}.search-submit-btn{width:33px;height:33px}
+  .bookmarks-widget{padding:15px 12px;border-radius:19px}
+  .bookmark-heading h1{font-size:16px}
+  .bookmark-actions{gap:7px}.toolbar-btn{min-height:38px;font-size:11px}
+  .bookmarks-grid{gap:8px}.bm-item{min-height:65px;padding:9px;gap:8px;border-radius:12px}.bm-link{gap:8px}.bm-name{font-size:12px}.bm-description{font-size:10px}
+  .bm-icon{border-radius:9px}
+  .settings-fab.customize-fab{height:38px;padding:0 10px;right:62px}.settings-fab-secondary{width:38px;height:38px}
+  .sort-select{gap:5px}.sort-select select{max-width:132px}
+}
+@media(max-width:350px){
+  :root{--visible-bookmark-columns:1}
+  .toolbar-options{gap:6px}.sort-select select{max-width:112px}
+  .category-tab{padding:8px 10px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Freeform widget editor */
+.free-widget.shape-square{border-radius:4px!important}
+.free-widget.shape-capsule{border-radius:999px!important}
+.free-widget.shape-capsule:not(.widget-bookmarks){padding:20px 26px}
+.freeform-canvas .free-widget{box-sizing:border-box}
+.widget-edit-mode .freeform-canvas>.free-widget{z-index:15}
+.widget-edit-mode .freeform-canvas>.widget-clock{z-index:16}
+.widget-edit-mode .freeform-canvas>.widget-search{z-index:21}
+.widget-edit-mode .freeform-canvas>.widget-quote{z-index:16}
+.widget-edit-mode .freeform-canvas>.widget-bookmarks{z-index:14}
+.widget-edit-mode .freeform-canvas>.free-widget.widget-selected{z-index:18}
+.widget-edit-mode .freeform-canvas>.widget-search.widget-selected{z-index:22}
+.widget-edit-mode .freeform-canvas>.widget-bookmarks.widget-selected{z-index:17}
+@media(max-width:760px){.freeform-canvas>.free-widget.widget-bookmarks{max-width:calc(100vw - 24px)}.freeform-canvas>.widget-clock,.freeform-canvas>.widget-search,.freeform-canvas>.widget-quote{max-width:calc(100vw - 24px)}}
+.widget-edit-mode .free-widget{outline:1px dashed rgba(167,190,255,.25);outline-offset:4px;cursor:grab;user-select:none;touch-action:none}
+.widget-edit-mode .free-widget:hover,.widget-edit-mode .free-widget.widget-selected{outline:1px solid var(--accent);outline-offset:4px;box-shadow:0 0 0 4px var(--accent-glow),0 18px 50px rgba(0,0,0,.18)}
+.widget-edit-mode .free-widget *{pointer-events:none!important}
+.widget-edit-mode .free-widget .widget-resize-handles,.widget-edit-mode .free-widget .widget-resize-handle{pointer-events:auto!important}
+.widget-edit-mode .free-widget:active{cursor:grabbing}
+.widget-edit-mode #btn-customize,.widget-edit-mode #btn-settings{z-index:30}
+.widget-resize-handles{position:absolute;inset:0;display:none;pointer-events:none;z-index:20}
+.widget-edit-mode .widget-selected .widget-resize-handles{display:block}
+.widget-resize-handle{position:absolute;display:block;width:12px;height:12px;border:2px solid #fff;border-radius:4px;background:var(--accent);box-shadow:0 2px 10px rgba(0,0,0,.35);pointer-events:auto;touch-action:none}
+.handle-n{top:-7px;left:calc(50% - 6px);cursor:ns-resize}.handle-e{right:-7px;top:calc(50% - 6px);cursor:ew-resize}.handle-s{bottom:-7px;left:calc(50% - 6px);cursor:ns-resize}.handle-w{left:-7px;top:calc(50% - 6px);cursor:ew-resize}
+.handle-ne{right:-7px;top:-7px;cursor:nesw-resize}.handle-nw{left:-7px;top:-7px;cursor:nwse-resize}.handle-se{right:-7px;bottom:-7px;cursor:nwse-resize}.handle-sw{left:-7px;bottom:-7px;cursor:nesw-resize}
+.widget-pointer-active{cursor:grabbing!important}.widget-pointer-active *{user-select:none!important}
+.widget-edit-bar{position:fixed;z-index:1000;left:50%;bottom:18px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;max-width:calc(100vw - 24px);padding:9px 12px 9px 16px;border:1px solid rgba(255,255,255,.14);border-radius:16px;background:rgba(17,19,31,.94);backdrop-filter:blur(20px);box-shadow:0 15px 50px rgba(0,0,0,.42);color:var(--text-secondary);font-size:11px;white-space:nowrap}
+.widget-edit-bar.hidden{display:none!important}
+.widget-edit-bar button{padding:8px 11px;border:1px solid rgba(255,255,255,.12);border-radius:9px;background:rgba(255,255,255,.06);color:var(--text-primary);font-family:inherit;font-size:11px;font-weight:600;cursor:pointer}
+.widget-edit-bar .save-layout-btn{background:var(--accent);border-color:var(--accent);color:#fff}
+.widget-edit-bar button:hover{filter:brightness(1.15)}
+@media(max-width:760px){.widget-edit-bar{left:12px;right:12px;bottom:12px;transform:none;flex-wrap:wrap;justify-content:center;white-space:normal;text-align:center}.widget-edit-bar>span{flex-basis:100%}}
+@media(max-width:300px){.widget-bookmarks{min-width:0}.widget-edit-bar{left:6px;right:6px;gap:5px;padding:7px}}
+
+/* Local bookmark workspace: pages, boards, import/export and recovery */
+.bookmark-heading>div:first-child{min-width:0}
+.bookmarks-widget{position:relative}
+.workspace-label{display:flex;align-items:center;gap:10px;margin:0 0 5px;color:var(--text-dim);font-size:9px;font-weight:800;letter-spacing:.16em}
+.workspace-label span{font-size:10px;font-weight:500;letter-spacing:0;text-transform:none}
+.board-label{margin-top:8px}
+.page-tabs{display:flex;gap:6px;overflow-x:auto;padding:0 0 4px;scrollbar-width:thin}
+.page-tab{flex:0 0 auto;padding:7px 12px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.035);color:var(--text-secondary);font-family:inherit;font-size:11.5px;font-weight:600;cursor:pointer;transition:.2s}
+.page-tab:hover,.page-tab.active{color:var(--text-primary);border-color:var(--accent);background:var(--accent-glow)}
+.category-tabs{margin-bottom:8px}
+.bookmark-toolbar{align-items:center;flex-wrap:wrap}
+.quick-save-btn,.text-action,.exact-search-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:34px;padding:0 10px;border:1px solid rgba(255,255,255,.1);border-radius:9px;background:rgba(255,255,255,.045);color:var(--text-secondary);font-family:inherit;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer;transition:.18s}
+.quick-save-btn:hover,.text-action:hover,.exact-search-btn:hover,.text-action.active,.exact-search-btn.active{color:var(--text-primary);border-color:var(--accent);background:var(--accent-glow)}
+.text-action:disabled{opacity:.38;cursor:not-allowed}
+.bookmark-filter{flex:1;width:auto;min-width:min(280px,100%)}
+.bookmark-filter .exact-search-btn{flex:0 0 auto}
+/* Everything the panel does not need at rest lives behind this one menu, so the
+   header is a title, one primary action and a ⋯ button. */
+.more-menu{position:relative;display:flex;align-items:center}
+.more-menu>summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;width:40px;min-height:40px;border:1px solid rgba(255,255,255,.11);border-radius:12px;background:rgba(255,255,255,.045);color:var(--text-secondary);font-size:17px;font-weight:700;cursor:pointer;transition:.18s}
+.more-menu>summary::-webkit-details-marker{display:none}
+.more-menu>summary:hover{border-color:var(--accent);color:var(--text-primary)}
+.more-menu[open]>summary{border-color:var(--accent);color:var(--text-primary)}
+.more-menu-list{position:absolute;top:calc(100% + 8px);right:0;z-index:60;display:none;flex-direction:column;gap:5px;min-width:190px;padding:8px;border:1px solid var(--glass-border);border-radius:14px;background:rgba(15,17,27,.98);backdrop-filter:blur(18px);box-shadow:0 18px 44px rgba(0,0,0,.42)}
+.more-menu[open] .more-menu-list{display:flex}
+.more-menu-list .text-action{display:flex;justify-content:flex-start;width:100%;min-height:32px;padding:0 10px;font-size:11px;text-align:left}
+.more-menu-list .text-action.active{color:#fff}
+.more-menu-list #trash-count{min-width:16px;text-align:center;padding:1px 4px;border-radius:99px;background:rgba(255,255,255,.09);font-size:9px}
+[data-mode="light"] .more-menu-list{background:rgba(255,255,255,.96)}
+.workspace-bookmark-card{position:relative}
+.bookmark-card-action{position:absolute;top:8px;display:inline-flex;align-items:center;justify-content:center;min-width:27px;height:26px;padding:0 6px;border:1px solid rgba(255,255,255,.1);border-radius:8px;background:rgba(9,11,18,.8);color:var(--text-secondary);font-family:inherit;font-size:11px;font-weight:600;opacity:0;cursor:pointer;transition:.18s;z-index:2}
+.workspace-bookmark-card:hover .bookmark-card-action,.bookmark-card-action:focus-visible{opacity:1}
+.bookmark-card-action.edit-bookmark{right:101px}
+.bookmark-card-action.favorite-bookmark{right:70px;color:#ffd166}
+.bookmark-card-action.delete-bookmark{right:39px}
+.bookmark-card-action.restore-bookmark{right:8px;padding:0 9px;opacity:1;color:var(--text-primary)}
+.bookmark-card-action:hover{border-color:var(--accent);background:var(--accent-glow)}
+.bookmark-open-options{position:absolute;top:7px;right:8px;z-index:4}
+.bookmark-open-options>summary{list-style:none;display:flex;align-items:center;justify-content:center;width:27px;height:26px;border:1px solid rgba(255,255,255,.1);border-radius:8px;background:rgba(9,11,18,.8);color:var(--text-secondary);font-size:14px;cursor:pointer;opacity:0;transition:.18s}
+.bookmark-open-options>summary::-webkit-details-marker{display:none}
+.workspace-bookmark-card:hover .bookmark-open-options>summary,.bookmark-open-options[open]>summary,.bookmark-open-options>summary:focus-visible{opacity:1}
+.bookmark-open-options[open]>summary{border-color:var(--accent);color:var(--text-primary)}
+.bookmark-open-options .bookmark-card-action{position:static;display:block;width:100%;min-width:90px;height:auto;margin-top:4px;padding:7px 10px;opacity:1;text-align:left;background:rgba(17,19,31,.97);box-shadow:0 8px 22px rgba(0,0,0,.2)}
+.bookmark-open-options[open]{padding:0 0 6px 6px;border-radius:10px;background:rgba(17,19,31,.96);box-shadow:0 8px 22px rgba(0,0,0,.2)}
+@media(max-width:520px){.bookmark-open-options>summary{opacity:1;width:24px;height:23px}.bookmark-open-options{top:4px;right:4px}.bookmark-open-options .bookmark-card-action{min-width:82px}}
+.workspace-bookmark-card .bm-link.disabled{pointer-events:none}
+/* Card actions belong to the customize/edit mode only. The text reserves their
+   footprint just while they are shown, so a resting card gives the whole width to
+   the title and a long title is never covered by a button. */
+.widget-edit-mode .workspace-bookmark-card .bm-text{padding-right:132px}
+.bookmark-tags{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--accent);font-size:10px;line-height:1.3}
+.privacy-mode .workspace-bookmark-card .bm-link{filter:blur(7px);user-select:none}
+.privacy-mode .workspace-bookmark-card .bookmark-card-action,.privacy-mode .bookmark-open-options>summary{opacity:0!important}
+.privacy-mode .workspace-bookmark-card:hover{transform:none}
+#bm-page,#bm-category{width:100%;height:40px;margin:0 0 12px;padding:0 12px;border:1px solid var(--glass-border);border-radius:10px;background:rgba(8,10,18,.38);color:var(--text-primary);font-family:inherit;font-size:13px;outline:none}
+#bm-page option,#bm-category option{background:#171a28;color:#fff}
+[data-mode="light"] #bm-page,[data-mode="light"] #bm-category{background:rgba(255,255,255,.65);color:#171a28}
+[data-mode="light"] #bm-page option,[data-mode="light"] #bm-category option{background:#fff;color:#171a28}
+#bm-save{width:100%;margin-top:5px;text-align:center!important}
+#custom-search-url{width:100%;height:40px;margin:0 0 8px;padding:0 12px;border:1px solid var(--glass-border);border-radius:10px;background:rgba(8,10,18,.38);color:var(--text-primary);font-family:inherit;font-size:13px;outline:none}
+.custom-search-help{margin:0;color:var(--text-dim);font-size:10px;line-height:1.5}
+.bookmark-card-action:focus-visible,.page-tab:focus-visible,.text-action:focus-visible,.quick-save-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:760px){
+  .bookmark-card-action{opacity:1}
+}
+@media(max-width:520px){
+  .workspace-label{font-size:8px}
+  .workspace-label span{font-size:9px}
+  .page-tab{padding:8px 11px;font-size:11px}
+  .bookmark-filter{min-width:0}
+  .bookmark-card-action.edit-bookmark{right:98px}
+  .bookmark-card-action.favorite-bookmark{right:67px}
+  .bookmark-card-action.delete-bookmark{right:36px}
+  .widget-edit-mode .workspace-bookmark-card .bm-text{padding-right:114px}
+}
+@media(prefers-reduced-motion:reduce){.page-tab,.text-action,.quick-save-btn,.bookmark-card-action{transition:none}}
+
+/* ===== Card size, shape and columns, at hand in the toolbar ===== */
+/* The three things a card's look is made of sat in three places: size in this
+   toolbar, corner radius and column count behind the Settings panel. They are all
+   here now, and they write the same `bookmark-preferences` record the Settings
+   sliders read, so the two views of one preference cannot disagree. */
+.card-shape-switch,.column-stepper{display:flex;align-items:center;gap:2px;padding:3px;border:1px solid rgba(255,255,255,.09);border-radius:10px;background:rgba(255,255,255,.035)}
+.shape-option{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:7px;background:transparent;color:var(--text-dim);cursor:pointer;transition:.2s}
+.shape-option:hover,.shape-option.active{background:rgba(255,255,255,.1);color:var(--text-primary)}
+/* Drawn rather than typed: a corner shape has no reliable glyph in the UI font. */
+.shape-dot{display:block;width:13px;height:13px;border:1.5px solid currentColor}
+.shape-dot-soft{border-radius:4px}.shape-dot-square{border-radius:1px}.shape-dot-pill{border-radius:7px}
+.column-step{width:24px;height:28px;border:0;border-radius:7px;background:transparent;color:var(--text-dim);font-family:inherit;font-size:14px;font-weight:700;line-height:1;cursor:pointer;transition:.2s}
+.column-step:hover:not(:disabled){background:rgba(255,255,255,.1);color:var(--text-primary)}
+.column-step:disabled{opacity:.3;cursor:default}
+#column-count{min-width:14px;text-align:center;color:var(--text-secondary);font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
+.shape-option:focus-visible,.column-step:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* A capsule is a radius the radius slider cannot express, so it is the one shape
+   carried by a class as well as by the number. */
+body[data-card-shape="pill"] .bm-item{border-radius:999px}
+body[data-card-shape="pill"] .bm-icon{border-radius:999px}
+/* The capsule widget shape, on the one widget whose body is a list of cards: a
+   999px radius carves the panel's own corners away, which left the outermost
+   cards sitting on the page behind it. The shape is honoured here as a large but
+   finite radius, the way the capsule padding is already excepted for this widget;
+   the alternative, clipping the panel, would cut off its ⋯ menu. */
+.widget-bookmarks.shape-capsule{border-radius:32px!important}
+[data-mode="light"] .card-shape-switch,[data-mode="light"] .column-stepper{border-color:rgba(20,25,45,.1);background:rgba(255,255,255,.5)}
+[data-mode="light"] .shape-option:hover,[data-mode="light"] .shape-option.active,[data-mode="light"] .column-step:hover:not(:disabled){background:rgba(0,0,0,.06)}
+@media(max-width:520px){.card-shape-switch,.column-stepper{padding:2px}.shape-option{width:25px;height:25px}}
+
+/* ===== Bookmark workspace: a library of any size ===== */
+/* The panel is a flex column capped at the room left below it in the viewport
+   (--widget-available-height, published by js/layout.js). Only the bookmark list
+   flexes, so it becomes the panel's scroll region. Two things used to paint the
+   library outside the glass card: a panel whose height a resize committed as a
+   fixed pixel value, and a library that had grown past that box. Both now scroll
+   the list inside the panel, and the panel stops at the fold rather than growing
+   off the bottom of the screen. */
+/* Capped at the fold, but never capped below a floor: on a short window the panel
+   is allowed to reach past the fold (the page scrolls to it) rather than being
+   squeezed until the list is one row tall. The panel still hugs a small library —
+   max-height alone leaves an auto-sized box at its content height — and the
+   smallest height a resize can commit is bounded in js/layout.js, which is where
+   a committed height is read and clamped. */
+.bookmarks-widget{display:flex;flex-direction:column;max-height:max(var(--widget-available-height,calc(100vh - 96px)),min(72vh,600px))}
+/* The rows above and below the list keep their natural height, and give way only
+   in the degenerate case where the panel is shorter than its own chrome: the
+   overflow is then absorbed inside a shrunken row instead of leaking out. */
+.bookmarks-widget>.bookmark-heading,
+.bookmarks-widget>.workspace-label,
+.bookmarks-widget>.tab-scroller,
+.bookmarks-widget>.bookmark-toolbar,
+.bookmarks-widget>.bookmarks-status,
+.bookmarks-widget>.bookmarks-empty{flex:0 1 auto}
+/* min-height:0 is what lets this shrink below its content; without it a flex item
+   refuses to go under its intrinsic height and the panel overflows again. */
+.bookmarks-grid{flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
+.bookmarks-grid::-webkit-scrollbar{width:8px}.bookmarks-grid::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:8px}.bookmarks-grid::-webkit-scrollbar-track{background:transparent}
+/* The fade follows the scroll position and is removed at the end of the list, so
+   it always means "there is more below" and never hides the last row. */
+.bookmarks-grid.is-scrollable{mask-image:linear-gradient(to bottom,#000 calc(100% - 30px),rgba(0,0,0,.05))}
+.bookmarks-status{margin-top:10px;color:var(--text-dim);font-size:10.5px;line-height:1.4}
+
+/* ===== Pages / boards rows: a scroller with controls ===== */
+/* A clipped row of pills was the only way to tell that this list continued. The
+   row keeps its one-line footprint, but now it carries scroll buttons that appear
+   only while it overflows, a mouse wheel that scrolls it sideways, and a "+" that
+   adds a page or a board without going through the ⋯ menu. */
+.tab-scroller{display:flex;align-items:center;gap:6px;min-width:0;margin:0 0 6px}
+.tab-scroller>.page-tabs,.tab-scroller>.category-tabs{flex:1 1 auto;min-width:0;margin:0;scrollbar-width:none}
+.tab-scroller>.page-tabs::-webkit-scrollbar,.tab-scroller>.category-tabs::-webkit-scrollbar{display:none;height:0}
+.tab-scroller-actions{display:flex;align-items:center;gap:4px;flex:0 0 auto}
+.tab-scroll-btn,.tab-add-btn{width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.1);border-radius:9px;background:rgba(255,255,255,.045);color:var(--text-secondary);font-family:inherit;font-size:12px;font-weight:700;line-height:1;cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+.tab-scroll-btn{display:none}
+.tab-scroller.can-scroll .tab-scroll-btn{display:inline-flex}
+.tab-scroll-btn:hover:not(:disabled),.tab-add-btn:hover{color:var(--text-primary);border-color:var(--accent);background:var(--accent-glow)}
+.tab-scroll-btn:disabled{opacity:.3;cursor:default}
+.tab-add-btn{font-size:15px;font-weight:600}
+.tab-add-btn:disabled{opacity:.38;cursor:not-allowed}
+.tab-scroll-btn:focus-visible,.tab-add-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[data-mode="light"] .tab-scroll-btn,[data-mode="light"] .tab-add-btn{border-color:rgba(20,25,45,.12);background:rgba(255,255,255,.5)}
+@media(max-width:520px){.tab-scroller{gap:4px}.tab-scroll-btn,.tab-add-btn{width:24px;height:24px}}
+
+/* Readability, favicon fallback and keyboard affordances */
+/* The favicon fallback letter is revealed by the JS error path; this keeps it
+   centred and guarantees the broken image is not shown alongside it. One blurred
+   layer per card was also removed above: with a large library, per-card
+   backdrop-filter was the single most expensive effect on the page. */
+.bm-icon--fallback img{display:none}
+.bm-icon--fallback .bm-fallback{display:flex;align-items:center;justify-content:center}
+.widget-resize-handle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.widget-edit-mode .free-widget:focus-within{outline:1px solid var(--accent);outline-offset:4px}
+
+/* Editorial hints — "Choose a workspace", "Groups in this page", the "In" / "Sort"
+   captions — are guidance for arranging the dashboard rather than content, so at
+   rest the panel shows only the controls. Customize mode brings them back. */
+.label-hint{display:none}
+.widget-edit-mode .label-hint{display:inline}
+
+/* Edit / favourite / delete / options appear ONLY in customize mode.
+   `display` is used rather than opacity or visibility for the hidden state: these
+   elements carry `transition:.18s` (i.e. transition-property:all), and a
+   transitioned `visibility` stays pinned at `visible` while it runs, so the
+   buttons survived leaving customize mode. `display:none` also takes them out of
+   the tab order and the hit-testing, and cannot be forced back by the older hover
+   and narrow-width opacity rules kept above. */
+.workspace-bookmark-card .bookmark-card-action,.workspace-bookmark-card .bookmark-open-options>summary{display:none}
+.widget-edit-mode .workspace-bookmark-card .bookmark-card-action{display:inline-flex;visibility:visible;opacity:1;pointer-events:auto!important}
+.widget-edit-mode .workspace-bookmark-card .bookmark-open-options>summary{display:flex;visibility:visible;opacity:1;pointer-events:auto!important}
+/* An opened options menu stays readable even if customize mode is left. */
+.bookmark-open-options[open]>summary{display:flex}
+/* The options menu reuses the same button class, so the rule above also matched
+   its rows and made them `inline-flex`, which re-applied `justify-content:center`
+   from the base rule and centred labels that are meant to be left-aligned. Keep
+   the menu rows block-level and left-aligned. */
+.widget-edit-mode .bookmark-open-options .bookmark-card-action{display:block;justify-content:flex-start}
+@media(prefers-reduced-motion:reduce){.workspace-bookmark-card .bookmark-card-action{transition:none}}

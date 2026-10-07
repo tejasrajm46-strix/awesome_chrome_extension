@@ -1,129 +1,49 @@
 window.App = window.App || {};
 window.App.Bookmarks = (function () {
-  var grid, modal, nameInput, urlInput, editIndexInput, titleEl;
-  var bookmarks = [];
+  'use strict';
 
-  function getDomain(u) {
-    try { return new URL(u).hostname.replace('www.', ''); } catch (e) { return ''; }
-  }
-
-  function esc(s) {
-    var d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
-  }
-
-  function save() {
-    App.Storage.set('bookmarks', bookmarks);
-  }
-
-  function render() {
-    grid.innerHTML = '';
-    bookmarks.forEach(function (bm, i) {
-      var domain = getDomain(bm.url);
-      var a = document.createElement('a');
-      a.href = bm.url;
-      a.className = 'bm-item';
-      a.title = bm.name + ' - ' + bm.url;
-      a.draggable = true;
-      a.dataset.index = i;
-      a.innerHTML =
-        '<div class="bm-icon"><img src="https://www.google.com/s2/favicons?domain=' + domain + '&sz=64" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'" /><span style="display:none;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,0.08);align-items:center;justify-content:center;font-size:16px;font-weight:700">' + bm.name.charAt(0).toUpperCase() + '</span></div>' +
-        '<span class="bm-name">' + esc(bm.name) + '</span>' +
-        '<button class="bm-edit" data-i="' + i + '" title="Edit">&#9998;</button>' +
-        '<button class="bm-remove" data-i="' + i + '" title="Remove">&times;</button>';
-      grid.appendChild(a);
-
-      a.addEventListener('dragstart', function (e) {
-        e.dataTransfer.setData('text/plain', i);
-        a.classList.add('dragging');
-      });
-      a.addEventListener('dragend', function () { a.classList.remove('dragging'); });
-      a.addEventListener('dragover', function (e) { e.preventDefault(); a.classList.add('drag-over'); });
-      a.addEventListener('dragleave', function () { a.classList.remove('drag-over'); });
-      a.addEventListener('drop', function (e) {
-        e.preventDefault();
-        a.classList.remove('drag-over');
-        var fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
-        var toIdx = i;
-        if (fromIdx === toIdx) return;
-        var item = bookmarks.splice(fromIdx, 1)[0];
-        bookmarks.splice(toIdx, 0, item);
-        save();
-        render();
-      });
-    });
-
-    grid.querySelectorAll('.bm-remove').forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.preventDefault(); e.stopPropagation();
-        bookmarks.splice(parseInt(btn.dataset.i), 1);
-        save(); render();
-      });
-    });
-
-    grid.querySelectorAll('.bm-edit').forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.preventDefault(); e.stopPropagation();
-        var idx = parseInt(btn.dataset.i);
-        openModal(idx);
-      });
-    });
-  }
-
-  function openModal(editIdx) {
-    if (typeof editIdx === 'number' && editIdx >= 0) {
-      titleEl.textContent = 'Edit Bookmark';
-      nameInput.value = bookmarks[editIdx].name;
-      urlInput.value = bookmarks[editIdx].url;
-      editIndexInput.value = editIdx;
-    } else {
-      titleEl.textContent = 'Add Bookmark';
-      nameInput.value = '';
-      urlInput.value = '';
-      editIndexInput.value = -1;
-    }
-    modal.classList.remove('hidden');
-    nameInput.focus();
-  }
+  var DEFAULT_BOARDS = ['Home', 'Dev & Code', 'Daily', 'Work', 'Entertainment', 'Shopping', 'Learning', 'News & Reading', 'Social', 'AI Tools'];
+  var DEFAULT_BOOKMARKS = [
+    { name: 'Google', url: 'https://google.com', category: 'Home' },
+    { name: 'YouTube', url: 'https://youtube.com', category: 'Entertainment' },
+    { name: 'GitHub', url: 'https://github.com', category: 'Dev & Code' },
+    { name: 'Reddit', url: 'https://reddit.com', category: 'Social' },
+    { name: 'Twitter', url: 'https://x.com', category: 'Social' },
+    { name: 'Notion', url: 'https://notion.so', category: 'Work' }
+  ];
 
   function init() {
-    grid = document.getElementById('bookmarks-grid');
-    modal = document.getElementById('bookmark-modal');
-    nameInput = document.getElementById('bm-name');
-    urlInput = document.getElementById('bm-url');
-    editIndexInput = document.getElementById('bm-edit-index');
-    titleEl = document.getElementById('bm-modal-title');
-    var addBtn = document.getElementById('add-bookmark-btn');
-    var closeBtn = document.getElementById('bm-modal-close');
-    var saveBtn = document.getElementById('bm-save');
-    if (!grid || !modal) return;
+    // Legacy seed / migration source only. The workspace module owns the bookmark
+    // UI, the card-size control and the live data, so this must not rewrite the
+    // stored data on every load -- it only seeds when the data is truly absent.
+    if (Array.isArray(App.Storage.get('bookmarks', null))) return;
 
-    bookmarks = App.Storage.get('bookmarks', [
-      { name: 'Google', url: 'https://google.com' },
-      { name: 'YouTube', url: 'https://youtube.com' },
-      { name: 'GitHub', url: 'https://github.com' },
-      { name: 'Reddit', url: 'https://reddit.com' },
-      { name: 'Twitter', url: 'https://x.com' },
-      { name: 'Notion', url: 'https://notion.so' }
-    ]);
-
-    render();
-
-    if (addBtn) addBtn.addEventListener('click', function () { openModal(-1); });
-    closeBtn.addEventListener('click', function () { modal.classList.add('hidden'); });
-    modal.addEventListener('click', function (e) { if (e.target === modal) modal.classList.add('hidden'); });
-    saveBtn.addEventListener('click', function () {
-      var n = nameInput.value.trim(), u = urlInput.value.trim();
-      if (!n || !u) return;
-      var idx = parseInt(editIndexInput.value);
-      if (idx >= 0) {
-        bookmarks[idx] = { name: n, url: u };
-      } else {
-        bookmarks.push({ name: n, url: u });
-      }
-      save(); render(); modal.classList.add('hidden');
+    var categories = App.Storage.get('bookmark-categories', null);
+    if (!Array.isArray(categories)) categories = DEFAULT_BOARDS.slice();
+    DEFAULT_BOARDS.forEach(function (name) {
+      if (!categories.some(function (item) { return String(item).toLowerCase() === name.toLowerCase(); })) categories.push(name);
     });
+
+    var bookmarks = DEFAULT_BOOKMARKS.map(function (bookmark) {
+      return { name: bookmark.name, url: bookmark.url, category: bookmark.category };
+    });
+    bookmarks = bookmarks.filter(function (bookmark) {
+      if (!bookmark || typeof bookmark !== 'object') return false;
+      try {
+        var url = new URL(String(bookmark.url || '').match(/^https?:\/\//i) ? bookmark.url : 'https://' + bookmark.url);
+        if (url.protocol !== 'https:' && url.protocol !== 'http:') return false;
+        bookmark.url = url.href;
+      } catch (error) { return false; }
+      bookmark.id = bookmark.id || 'bm-' + Math.random().toString(36).slice(2, 10);
+      bookmark.name = String(bookmark.name || bookmark.title || bookmark.url).slice(0, 200);
+      bookmark.category = categories.indexOf(bookmark.category) >= 0 ? bookmark.category : 'Home';
+      bookmark.description = String(bookmark.description || '').slice(0, 500);
+      bookmark.addedAt = Number(bookmark.addedAt) || Date.now();
+      bookmark.uses = Number(bookmark.uses) || 0;
+      return true;
+    });
+    App.Storage.set('bookmark-categories', categories);
+    App.Storage.set('bookmarks', bookmarks);
   }
 
   return { init: init };

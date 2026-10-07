@@ -125,6 +125,13 @@ folder. The repository root *is* the extension: `manifest.json`, `newtab.html`, 
   <sub>What a fresh install shows — ten boards ready, six starter bookmarks, nothing to configure.</sub>
 </div>
 
+### Your own background, your own layout
+
+<div align="center">
+  <img src="docs/custom-background.jpg" alt="The dashboard with a custom background: a monochrome dragon wallpaper behind the greeting, clock, web search, quote, and a Bookmarks panel holding 22 cards across pages and boards" width="100%" />
+  <sub>An image of your own — stored locally, never uploaded — with the widgets dragged wherever you like them.</sub>
+</div>
+
 ### The panel, up close
 
 <div align="center">

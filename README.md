@@ -218,7 +218,7 @@ out into a variant set.
 | `assets/brand/glass-new-tab-logo.svg` | Master mark, brand red, with clear space |
 | `assets/brand/glass-new-tab-logo-tight.svg` | Tight variant — used for the toolbar icons |
 | `assets/brand/glass-new-tab-logo-black.svg` / `…-white.svg` | One-colour versions for print and dark backgrounds |
-| `assets/brand/glass-new-tab-logo-mono-822319.svg` | One-colour in the deep red |
+| `assets/brand/glass-new-tab-logo-mono-red.svg` | One-colour in the deep red |
 | `assets/brand/glass-new-tab-app-icon.svg`, `…-square.svg` | Store, avatar and social masters |
 | `assets/brand/png/` | PNG exports at 512 px |
 | `docs/logo-concepts.png` | The three concepts this mark was chosen from, at real sizes |
@@ -306,7 +306,7 @@ easiest review.
 ---
 
 <div align="center">
-  <img src="assets/brand/png/logo-mono-822319-512.png" alt="" width="34" />
+  <img src="assets/brand/png/logo-mono-red-512.png" alt="" width="34" />
   <br />
   <b>Glass New Tab</b> — bookmark pages and boards for your new tab.
   <br />

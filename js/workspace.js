@@ -2,7 +2,62 @@ window.App = window.App || {};
 window.App.Workspace = (function () {
   'use strict';
 
-  var KEY = 'bookmark-workspace';
+  // Every bookmark keeper is one instance of this factory: its own library, its
+  // own undo stack, its own DOM ids (all suffixed) and its own storage keys, so
+  // two panels on the same dashboard never see each other's bookmarks.
+  // ---- second keeper panel --------------------------------------------
+  // Cloned from the first panel so both keepers share one markup source. Ids
+  // are suffixed, which is what lets both instances address their own elements
+  // with the same helper.
+  function suffixIds(node, suffix) {
+    Array.prototype.forEach.call(node.querySelectorAll('[id]'), function (element) {
+      element.id = element.id + suffix;
+    });
+    Array.prototype.forEach.call(node.querySelectorAll('[for]'), function (label) {
+      label.setAttribute('for', label.getAttribute('for') + suffix);
+    });
+  }
+  function buildSecondKeeper() {
+    if (document.getElementById('bookmarks-section-2')) return;
+    var source = document.getElementById('bookmarks-section');
+    if (!source) return;
+    var clone = source.cloneNode(true);
+    suffixIds(clone, '-2');
+    clone.id = 'bookmarks-section-2';
+    clone.classList.add('widget-bookmarks-2');
+    clone.setAttribute('data-widget-id', 'bookmarks-2');
+    clone.setAttribute('aria-label', 'Bookmarks keeper 2');
+    var heading = clone.querySelector('.bookmark-heading h1');
+    if (heading) heading.textContent = 'Bookmarks';
+    var more = clone.querySelector('.more-menu');
+    if (more) more.removeAttribute('open');
+    var search = clone.querySelector('.bookmark-filter input[type="search"]');
+    if (search) search.value = '';
+    var scopeSelect = clone.querySelector('[aria-label="Search scope"]');
+    if (scopeSelect) scopeSelect.value = 'workspace';
+    var sortSelect = clone.querySelector('[aria-label="Sort bookmarks"]');
+    if (sortSelect) sortSelect.value = 'custom';
+    var dashboard = document.getElementById('dashboard') || source.parentNode;
+    dashboard.appendChild(clone);
+    ['bookmark-modal', 'page-modal', 'category-modal', 'quick-save-modal'].forEach(function (id) {
+      var modal = document.getElementById(id);
+      if (!modal) return;
+      var copy = modal.cloneNode(true);
+      suffixIds(copy, '-2');
+      copy.id = id + '-2';
+      copy.classList.add('hidden');
+      document.body.appendChild(copy);
+    });
+  }
+
+  function create(opts) {
+  opts = opts || {};
+  var SUFFIX = opts.suffix || '';
+  var isPrimary = !SUFFIX;
+  var root = null;
+  function byId(id) { return document.getElementById(id + SUFFIX); }
+  function skey(key) { return key + SUFFIX; }
+  var KEY = 'bookmark-workspace' + SUFFIX;
   var VERSION = 1;
   var BUILT_IN_BOARDS = ['Home', 'Dev & Code', 'Daily', 'Work', 'Entertainment', 'Shopping', 'Learning', 'News & Reading', 'Social', 'AI Tools'];
   var workspace;
@@ -22,13 +77,28 @@ window.App.Workspace = (function () {
   // value after either one moves.
   var syncCardControls = null;
 
+  // True when the event is happening inside this keeper (its panel, one of its
+  // inputs, or a modal it owns), so the second panel's shortcuts stay silent
+  // while the first one is the one being used.
+  function ownsActiveElement() {
+    var active = document.activeElement;
+    if (active && active !== document.body) {
+      if (root && root.contains(active)) return true;
+      if (SUFFIX && active.id && active.id.slice(-SUFFIX.length) === SUFFIX) return true;
+    }
+    return ['bookmark-modal', 'page-modal', 'category-modal', 'quick-save-modal'].some(function (base) {
+      var modal = document.getElementById(base + SUFFIX);
+      return modal && !modal.classList.contains('hidden');
+    });
+  }
+
   function makeId(prefix) { return prefix + '-' + Math.random().toString(36).slice(2, 10); }
   function emit() { listeners.slice().forEach(function (listener) { listener(); }); }
   function snapshot() { return JSON.stringify(workspace); }
   function persist() {
     App.Storage.set(KEY, workspace);
-    App.Storage.set('workspace-active-page', activePage);
-    App.Storage.set('workspace-active-board', activeBoard);
+    App.Storage.set(skey('workspace-active-page'), activePage);
+    App.Storage.set(skey('workspace-active-board'), activeBoard);
     emit();
   }
   function transact(change) {
@@ -137,15 +207,18 @@ window.App.Workspace = (function () {
   }
 
   function init() {
+    root = byId('bookmarks-section');
     workspace = App.Storage.get(KEY, null);
-    if (!workspace) migrateLegacy();
-    activePage = App.Storage.get('workspace-active-page', activePage || (workspace.pages[0] && workspace.pages[0].id));
+    // The first keeper inherits the legacy library; a second one starts empty
+    // rather than duplicating it.
+    if (!workspace) { if (isPrimary) migrateLegacy(); else workspace = { version: VERSION, pages: [] }; }
+    activePage = App.Storage.get(skey('workspace-active-page'), activePage || (workspace.pages[0] && workspace.pages[0].id));
     normalize();
-    activeBoard = App.Storage.get('workspace-active-board', currentPage().boards[0].id);
+    activeBoard = App.Storage.get(skey('workspace-active-board'), currentPage().boards[0].id);
     normalize();
     setupUI();
-    App.Storage.set('workspace-active-page', activePage);
-    App.Storage.set('workspace-active-board', activeBoard);
+    App.Storage.set(skey('workspace-active-page'), activePage);
+    App.Storage.set(skey('workspace-active-board'), activeBoard);
     App.Storage.set(KEY, workspace);
   }
 
@@ -153,8 +226,8 @@ window.App.Workspace = (function () {
     activePage = pageById(pageId) ? pageId : activePage;
     var page = currentPage();
     activeBoard = boardById(page, boardId) ? boardId : page.boards[0].id;
-    App.Storage.set('workspace-active-page', activePage);
-    App.Storage.set('workspace-active-board', activeBoard);
+    App.Storage.set(skey('workspace-active-page'), activePage);
+    App.Storage.set(skey('workspace-active-board'), activeBoard);
     emit();
   }
 
@@ -430,7 +503,7 @@ window.App.Workspace = (function () {
     query = String(value || '').trim().toLowerCase();
     if (typeof isExact === 'boolean') exact = isExact;
     if (['workspace', 'page', 'board', 'favorites', 'recently-visited'].indexOf(scope) >= 0) searchScope = scope;
-    if (query) { recentSearches = [query].concat(recentSearches.filter(function (item) { return item !== query; })).slice(0, 8); App.Storage.set('bookmark-recent-searches', recentSearches); }
+    if (query) { recentSearches = [query].concat(recentSearches.filter(function (item) { return item !== query; })).slice(0, 8); App.Storage.set(skey('bookmark-recent-searches'), recentSearches); }
     emit();
   }
 
@@ -520,41 +593,41 @@ window.App.Workspace = (function () {
   }
 
   function setupUI() {
-    var pageTabs = document.getElementById('page-tabs');
-    var boardTabs = document.getElementById('category-tabs');
-    var pageScroller = setupTabScroller(document.getElementById('page-tabs-scroller'));
-    var boardScroller = setupTabScroller(document.getElementById('category-tabs-scroller'));
-    var statusLine = document.getElementById('bookmarks-status');
-    var grid = document.getElementById('bookmarks-grid');
-    var empty = document.getElementById('bookmarks-empty');
-    var search = document.getElementById('bookmark-search');
-    var scope = document.getElementById('bookmark-search-scope');
-    var title = document.querySelector('.bookmark-heading h1');
-    var addPageButton = document.getElementById('add-page-btn');
-    var addBoardButton = document.getElementById('add-category-btn');
-    var inlinePageButton = document.getElementById('page-add-inline');
-    var inlineBoardButton = document.getElementById('board-add-inline');
-    var addBookmarkButton = document.getElementById('add-bookmark-btn');
-    var undoButton = document.getElementById('undo-action-btn');
-    var redoButton = document.getElementById('redo-action-btn');
-    var trashButton = document.getElementById('trash-view-btn');
-    var trashCount = document.getElementById('trash-count');
-    var importInput = document.getElementById('workspace-import-file');
-    var bookmarkModal = document.getElementById('bookmark-modal');
-    var quickSaveModal = document.getElementById('quick-save-modal');
-    var pageSelect = document.getElementById('bm-page');
-    var boardSelect = document.getElementById('bm-category');
-    var saveBookmarkButton = document.getElementById('bm-save');
-    var savedScope = App.Storage.get('bookmark-search-scope', 'workspace');
+    var pageTabs = byId('page-tabs');
+    var boardTabs = byId('category-tabs');
+    var pageScroller = setupTabScroller(byId('page-tabs-scroller'));
+    var boardScroller = setupTabScroller(byId('category-tabs-scroller'));
+    var statusLine = byId('bookmarks-status');
+    var grid = byId('bookmarks-grid');
+    var empty = byId('bookmarks-empty');
+    var search = byId('bookmark-search');
+    var scope = byId('bookmark-search-scope');
+    var title = root ? root.querySelector('.bookmark-heading h1') : null;
+    var addPageButton = byId('add-page-btn');
+    var addBoardButton = byId('add-category-btn');
+    var inlinePageButton = byId('page-add-inline');
+    var inlineBoardButton = byId('board-add-inline');
+    var addBookmarkButton = byId('add-bookmark-btn');
+    var undoButton = byId('undo-action-btn');
+    var redoButton = byId('redo-action-btn');
+    var trashButton = byId('trash-view-btn');
+    var trashCount = byId('trash-count');
+    var importInput = byId('workspace-import-file');
+    var bookmarkModal = byId('bookmark-modal');
+    var quickSaveModal = byId('quick-save-modal');
+    var pageSelect = byId('bm-page');
+    var boardSelect = byId('bm-category');
+    var saveBookmarkButton = byId('bm-save');
+    var savedScope = App.Storage.get(skey('bookmark-search-scope'), 'workspace');
     if (['workspace', 'page', 'board', 'favorites', 'recently-visited'].indexOf(savedScope) < 0) savedScope = 'board';
     searchScope = savedScope;
     if (scope) scope.value = savedScope;
-    exact = !!App.Storage.get('bookmark-exact-search', false);
-    recentSearches = App.Storage.get('bookmark-recent-searches', []);
+    exact = !!App.Storage.get(skey('bookmark-exact-search'), false);
+    recentSearches = App.Storage.get(skey('bookmark-recent-searches'), []);
     if (!Array.isArray(recentSearches)) recentSearches = [];
 
     function renderTabs() {
-      var boardLabel = document.querySelector('.board-label span');
+      var boardLabel = root ? root.querySelector('.board-label span') : null;
       if (boardLabel) boardLabel.textContent = deletedView ? 'Items you can restore' : 'Groups in this page';
       // Rebuilding the rows would otherwise snap them back to the first page or
       // board, so a board picked from the end of the row would scroll out from
@@ -583,7 +656,7 @@ window.App.Workspace = (function () {
           button.addEventListener('click', function () {
             deletedView = false;
             if (scope) { scope.value = 'page'; scope.disabled = false; }
-            App.Storage.set('bookmark-search-scope', 'page');
+            App.Storage.set(skey('bookmark-search-scope'), 'page');
             searchScope = 'page';
             setActive(page.id, page.boards[0] && page.boards[0].id);
           });
@@ -620,7 +693,7 @@ window.App.Workspace = (function () {
           button.addEventListener('click', function () {
             deletedView = false;
             if (scope) { scope.value = 'board'; scope.disabled = false; }
-            App.Storage.set('bookmark-search-scope', 'board');
+            App.Storage.set(skey('bookmark-search-scope'), 'board');
             searchScope = 'board';
             setActive(activePage, board.id);
           });
@@ -672,7 +745,7 @@ window.App.Workspace = (function () {
       if (empty) empty.classList.toggle('hidden', results.length > 0);
       if (emptyMessage) emptyMessage.textContent = deletedView ? 'Trash is empty' : 'No bookmarks found';
       if (emptyHint) emptyHint.textContent = deletedView ? 'Deleted bookmarks can be restored here.' : 'Try another search, or add a bookmark to this board.';
-      var sort = document.getElementById('bookmark-sort');
+      var sort = byId('bookmark-sort');
       var sortMode = sort ? sort.value : 'custom';
       if (!deletedView && sortMode === 'az') results.sort(function (a, b) { return a.name.localeCompare(b.name); });
       else if (!deletedView && sortMode === 'recent') results.sort(function (a, b) { return b.addedAt - a.addedAt; });
@@ -682,6 +755,9 @@ window.App.Workspace = (function () {
         var card = document.createElement('article');
         card.className = 'bm-item workspace-bookmark-card';
         card.dataset.id = bookmark.id || bookmark.deletedId;
+        // Programmatic focus target for arrow-key navigation: in Trash the link
+        // has no href and so cannot take focus, so the card itself does.
+        card.tabIndex = -1;
         var link = document.createElement('a');
         link.className = 'bm-link';
         link.href = bookmark.url;
@@ -831,12 +907,163 @@ window.App.Workspace = (function () {
     function updateEditorPages() {
       var selectedPage = pageSelect && pageSelect.value;
       var selectedBoard = boardSelect && boardSelect.value;
-      var quickSelectedPage = document.getElementById('quick-save-page') && document.getElementById('quick-save-page').value;
-      var quickSelectedBoard = document.getElementById('quick-save-board') && document.getElementById('quick-save-board').value;
+      var quickSelectedPage = byId('quick-save-page') && byId('quick-save-page').value;
+      var quickSelectedBoard = byId('quick-save-board') && byId('quick-save-board').value;
       populateLocationSelects(pageSelect, boardSelect, selectedPage || activePage, selectedBoard);
-      populateLocationSelects(document.getElementById('quick-save-page'), document.getElementById('quick-save-board'), quickSelectedPage || activePage, quickSelectedBoard);
+      populateLocationSelects(byId('quick-save-page'), byId('quick-save-board'), quickSelectedPage || activePage, quickSelectedBoard);
     }
-    function render() { updateEditorPages(); renderTabs(); renderCards(); }
+    // ---- page / board picker ------------------------------------------
+    // Two ways around the library: compact dropdowns (the default) and the old
+    // scrollable pill rows. The choice is remembered so the panel comes back
+    // the way it was left.
+    var pageField = byId('page-select');
+    var boardField = byId('board-select');
+    var selectorRow = byId('workspace-selectors');
+    var pickerButton = byId('selector-mode-btn');
+    var pickerRows = root ? Array.prototype.slice.call(root.querySelectorAll('.picker-rows')) : [];
+    // Suffixed like every other preference, so each keeper remembers its own
+    // picker instead of one panel's choice switching the other one over.
+    var pickerMode = App.Storage.get(skey('bookmark-picker-mode'), 'dropdown');
+    if (pickerMode !== 'rows') pickerMode = 'dropdown';
+
+    function applyPickerMode() {
+      var rows = pickerMode === 'rows';
+      if (selectorRow) selectorRow.classList.toggle('hidden', rows);
+      pickerRows.forEach(function (row) { row.classList.toggle('hidden', !rows); });
+      if (pickerButton) {
+        pickerButton.textContent = rows ? 'Dropdowns' : 'Pill rows';
+        pickerButton.setAttribute('aria-pressed', String(rows));
+        pickerButton.title = rows ? 'Switch to the compact dropdown pickers' : 'Switch to scrollable pill rows';
+      }
+      if (pageScroller) pageScroller.sync();
+      if (boardScroller) boardScroller.sync();
+    }
+    if (pickerButton) pickerButton.addEventListener('click', function () {
+      pickerMode = pickerMode === 'rows' ? 'dropdown' : 'rows';
+      App.Storage.set(skey('bookmark-picker-mode'), pickerMode);
+      applyPickerMode();
+    });
+    applyPickerMode();
+
+    function syncSelectors() {
+      if (pageField) {
+        pageField.innerHTML = '';
+        workspace.pages.forEach(function (page) {
+          var option = document.createElement('option');
+          option.value = page.id;
+          option.textContent = page.name;
+          pageField.appendChild(option);
+        });
+        pageField.value = activePage;
+      }
+      if (boardField) {
+        var page = currentPage();
+        boardField.innerHTML = '';
+        page.boards.forEach(function (board) {
+          var option = document.createElement('option');
+          option.value = board.id;
+          option.textContent = board.name + ' (' + board.bookmarks.length + ')';
+          boardField.appendChild(option);
+        });
+        boardField.value = activeBoard;
+      }
+    }
+
+    if (pageField) {
+      pageField.addEventListener('change', function () {
+        var page = pageById(pageField.value);
+        if (!page) return;
+        deletedView = false;
+        if (scope) { scope.value = 'page'; scope.disabled = false; }
+        App.Storage.set(skey('bookmark-search-scope'), 'page');
+        searchScope = 'page';
+        setActive(page.id, page.boards[0] && page.boards[0].id);
+      });
+      pageField.addEventListener('contextmenu', function (event) { event.preventDefault(); renameActivePage(); });
+    }
+    if (boardField) {
+      boardField.addEventListener('change', function () {
+        if (!boardById(currentPage(), boardField.value)) return;
+        deletedView = false;
+        if (scope) { scope.value = 'board'; scope.disabled = false; }
+        App.Storage.set(skey('bookmark-search-scope'), 'board');
+        searchScope = 'board';
+        setActive(activePage, boardField.value);
+      });
+      boardField.addEventListener('contextmenu', function (event) { event.preventDefault(); renameActiveBoard(); });
+    }
+
+    function deleteActivePage() {
+      var page = currentPage();
+      if (workspace.pages.length < 2) { alert('Keep at least one page.'); return; }
+      if (confirm('Move bookmarks in “' + page.name + '” to Trash and delete this page?')) deletePage(page.id);
+    }
+    function deleteActiveBoard() {
+      var board = currentBoard();
+      if (currentPage().boards.length < 2) { alert('Keep at least one board on each page.'); return; }
+      if (confirm('Move bookmarks in “' + board.name + '” to Trash and delete this board?')) deleteBoard(currentPage().id, board.id);
+    }
+    function renameActivePage() {
+      var page = currentPage();
+      var value = prompt('Rename page, or leave blank to delete:', page.name);
+      if (value === null) return;
+      if (value.trim()) { if (!renamePage(page.id, value)) alert('Page names must be unique and cannot be empty.'); }
+      else deleteActivePage();
+    }
+    function renameActiveBoard() {
+      var board = currentBoard();
+      var value = prompt('Rename board, or leave blank to delete:', board.name);
+      if (value === null) return;
+      if (value.trim()) { if (!renameBoard(currentPage().id, board.id, value)) alert('Board names must be unique within this page.'); }
+      else deleteActiveBoard();
+    }
+    [['rename-page-btn', renameActivePage], ['rename-board-btn', renameActiveBoard],
+     ['delete-page-btn', deleteActivePage], ['delete-board-btn', deleteActiveBoard]].forEach(function (pair) {
+      var button = byId(pair[0]);
+      if (button) button.addEventListener('click', pair[1]);
+    });
+
+    // ---- layout: grid, vertical list or compact list -------------------
+    // Stored per keeper, so one panel can hold a card grid while the other is a
+    // vertical list. A fresh install opens on the vertical list: the panel ships
+    // as a tall narrow column, and full-width rows read better there than a card
+    // grid squeezed into one column.
+    var panel = root || byId('bookmarks-section');
+    var layoutButtons = panel ? Array.prototype.slice.call(panel.querySelectorAll('.layout-option')) : [];
+    var layoutMode = App.Storage.get(skey('bookmark-layout'), 'list');
+    if (['grid', 'list', 'compact'].indexOf(layoutMode) < 0) layoutMode = 'list';
+    function applyLayoutMode() {
+      if (panel) panel.dataset.layout = layoutMode;
+      layoutButtons.forEach(function (button) {
+        var active = button.dataset.layout === layoutMode;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+    }
+    layoutButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        layoutMode = button.dataset.layout;
+        App.Storage.set(skey('bookmark-layout'), layoutMode);
+        applyLayoutMode();
+        emit();
+      });
+    });
+    applyLayoutMode();
+
+    // The list is the only scrollable region of the panel, so a wheel over the
+    // heading, the search row or the status line used to do nothing at all — the
+    // panel looked stuck unless the pointer happened to sit over the cards. Hand
+    // those events to the list, so the panel reads as one scrollable column.
+    if (panel && grid) {
+      panel.addEventListener('wheel', function (event) {
+        if (event.target && grid.contains(event.target)) return; // the list already has it
+        if (grid.scrollHeight <= grid.clientHeight) return;      // nothing to scroll
+        event.preventDefault();
+        grid.scrollTop += event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
+      }, { passive: false });
+    }
+
+    function render() { updateEditorPages(); renderTabs(); syncSelectors(); renderCards(); }
     listeners.push(render);
     if (addPageButton) addPageButton.addEventListener('click', function () { openNameModal('page-modal', 'page-name'); });
     if (addBoardButton) addBoardButton.addEventListener('click', function () { openNameModal('category-modal', 'category-name'); });
@@ -846,16 +1073,41 @@ window.App.Workspace = (function () {
       grid.addEventListener('scroll', syncScrollAffordance, { passive: true });
       if (typeof ResizeObserver === 'function') new ResizeObserver(syncScrollAffordance).observe(grid);
     }
+    // Arrow keys walk the grid, so a long library is reachable without tabbing
+    // through every card. The row length is read from the laid-out grid, so the
+    // same handler works for the card grid and the single-column list layouts.
+    if (grid) grid.addEventListener('keydown', function (event) {
+      if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Home', 'End'].indexOf(event.key) < 0) return;
+      var cards = Array.prototype.slice.call(grid.querySelectorAll('.workspace-bookmark-card'));
+      if (!cards.length) return;
+      var activeCard = document.activeElement && document.activeElement.closest ? document.activeElement.closest('.workspace-bookmark-card') : null;
+      var current = cards.indexOf(activeCard);
+      if (current < 0) return;
+      var columns = 1;
+      try { columns = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length || 1; } catch (error) { columns = 1; }
+      var next = current;
+      if (event.key === 'ArrowRight') next = current + 1;
+      else if (event.key === 'ArrowLeft') next = current - 1;
+      else if (event.key === 'ArrowDown') next = current + columns;
+      else if (event.key === 'ArrowUp') next = current - columns;
+      else if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = cards.length - 1;
+      if (next < 0 || next >= cards.length || next === current) return;
+      event.preventDefault();
+      var target = cards[next].querySelector('.bm-link') || cards[next];
+      if (target.focus) target.focus();
+      if (target.scrollIntoView) target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    });
     bindNameModal('page-modal', 'page-name', 'page-modal-close', 'page-save', addPage);
     bindNameModal('category-modal', 'category-name', 'category-modal-close', 'category-save', addBoard);
     if (addBookmarkButton) addBookmarkButton.addEventListener('click', function () { openBookmarkEditor(null); });
-    var quickSaveClose = document.getElementById('quick-save-close');
-    var quickSaveSave = document.getElementById('quick-save-save');
-    var quickSaveTitle = document.getElementById('quick-save-title');
-    var quickSaveUrl = document.getElementById('quick-save-url');
-    var quickSaveDescription = document.getElementById('quick-save-description');
-    var quickSavePage = document.getElementById('quick-save-page');
-    var quickSaveBoard = document.getElementById('quick-save-board');
+    var quickSaveClose = byId('quick-save-close');
+    var quickSaveSave = byId('quick-save-save');
+    var quickSaveTitle = byId('quick-save-title');
+    var quickSaveUrl = byId('quick-save-url');
+    var quickSaveDescription = byId('quick-save-description');
+    var quickSavePage = byId('quick-save-page');
+    var quickSaveBoard = byId('quick-save-board');
     if (quickSavePage) quickSavePage.addEventListener('change', function () { fillBookmarkBoards(quickSavePage, quickSaveBoard); });
     function closeQuickSaveTab() {
       if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) chrome.runtime.sendMessage({ type: 'GLASS_CLOSE_QUICK_SAVE_TAB' });
@@ -881,23 +1133,24 @@ window.App.Workspace = (function () {
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) chrome.storage.local.remove('quickSaveDraft');
       if (location.hash === '#quick-save') closeQuickSaveTab();
     });
-    var closeBookmark = document.getElementById('bm-modal-close');
+    var closeBookmark = byId('bm-modal-close');
     if (closeBookmark) closeBookmark.addEventListener('click', function () { bookmarkModal.classList.add('hidden'); editingId = null; });
     if (bookmarkModal) bookmarkModal.addEventListener('click', function (event) {
       if (event.target === bookmarkModal) { bookmarkModal.classList.add('hidden'); editingId = null; }
     });
     document.addEventListener('keydown', function (event) {
+      if (!isPrimary && !ownsActiveElement()) return;
       var target = event.target;
       var isTyping = target && (/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable);
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
-        var bookmarkSearch = document.getElementById('bookmark-search');
+        var bookmarkSearch = byId('bookmark-search');
         if (bookmarkSearch) bookmarkSearch.focus();
       } else if (!isTyping && (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'b') {
         event.preventDefault();
         if (scope) { scope.value = 'favorites'; scope.disabled = false; }
         searchScope = 'favorites';
-        App.Storage.set('bookmark-search-scope', 'favorites');
+        App.Storage.set(skey('bookmark-search-scope'), 'favorites');
         deletedView = false;
         emit();
       } else if (!isTyping && (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z' && !event.shiftKey) {
@@ -914,12 +1167,12 @@ window.App.Workspace = (function () {
     });
     if (pageSelect) pageSelect.addEventListener('change', function () { fillBookmarkBoards(pageSelect, boardSelect); });
     if (saveBookmarkButton) saveBookmarkButton.addEventListener('click', function () {
-      var name = document.getElementById('bm-name').value.trim();
-      var url = document.getElementById('bm-url').value.trim();
-      var description = document.getElementById('bm-description').value.trim();
-      var tagsInput = document.getElementById('bm-tags');
+      var name = byId('bm-name').value.trim();
+      var url = byId('bm-url').value.trim();
+      var description = byId('bm-description').value.trim();
+      var tagsInput = byId('bm-tags');
       var tags = tagsInput ? tagsInput.value : '';
-      if (!name || !url) { (name ? document.getElementById('bm-url') : document.getElementById('bm-name')).focus(); return; }
+      if (!name || !url) { (name ? byId('bm-url') : byId('bm-name')).focus(); return; }
       if (editingId) {
         if (!updateBookmark(editingId, { name: name, url: url, description: description, tags: tags, pageId: pageSelect.value, boardId: boardSelect.value })) {
           alert('Check the URL or destination board; this URL may already exist there.');
@@ -937,16 +1190,16 @@ window.App.Workspace = (function () {
       deletedView = false;
       scope.disabled = false;
       searchScope = scope.value;
-      App.Storage.set('bookmark-search-scope', searchScope);
+      App.Storage.set(skey('bookmark-search-scope'), searchScope);
       emit();
     });
-    var exactButton = document.getElementById('exact-search-btn');
+    var exactButton = byId('exact-search-btn');
     if (exactButton) {
       exactButton.classList.toggle('active', exact);
       exactButton.setAttribute('aria-pressed', String(exact));
       exactButton.addEventListener('click', function () {
         exact = !exact;
-        App.Storage.set('bookmark-exact-search', exact);
+        App.Storage.set(skey('bookmark-exact-search'), exact);
         exactButton.classList.toggle('active', exact);
         exactButton.setAttribute('aria-pressed', String(exact));
         setQuery(search && search.value, exact, searchScope);
@@ -957,7 +1210,7 @@ window.App.Workspace = (function () {
     if (undoButton) undoButton.addEventListener('click', undo);
     if (redoButton) redoButton.addEventListener('click', redo);
     if (trashButton) trashButton.addEventListener('click', function () { deletedView = !deletedView; if (scope) scope.disabled = deletedView; emit(); });
-    var privacyButton = document.getElementById('privacy-mode-btn');
+    var privacyButton = byId('privacy-mode-btn');
     if (privacyButton) {
       privacyButton.setAttribute('aria-pressed', String(!!App.Storage.get('privacy-mode', false)));
       privacyButton.classList.toggle('active', App.Storage.get('privacy-mode', false));
@@ -969,24 +1222,24 @@ window.App.Workspace = (function () {
         emit();
       });
     }
-    var exportButton = document.getElementById('export-workspace-btn');
+    var exportButton = byId('export-workspace-btn');
     if (exportButton) exportButton.addEventListener('click', exportWorkspace);
-    var exportHtmlButton = document.getElementById('export-html-btn');
+    var exportHtmlButton = byId('export-html-btn');
     if (exportHtmlButton) exportHtmlButton.addEventListener('click', exportBookmarksHTML);
-    var exportCsvButton = document.getElementById('export-csv-btn');
+    var exportCsvButton = byId('export-csv-btn');
     if (exportCsvButton) exportCsvButton.addEventListener('click', exportBookmarksCSV);
-    var importButton = document.getElementById('import-workspace-btn');
+    var importButton = byId('import-workspace-btn');
     if (importButton && importInput) importButton.addEventListener('click', function () { importInput.click(); });
     var cardSize = App.Storage.get('bookmark-card-size', 'medium');
     if (['compact', 'medium', 'large'].indexOf(cardSize) < 0) cardSize = 'medium';
     document.body.dataset.cardSize = cardSize;
-    document.querySelectorAll('.size-option').forEach(function (button) {
+    root.querySelectorAll('.size-option').forEach(function (button) {
       button.classList.toggle('active', button.dataset.size === cardSize);
       button.setAttribute('aria-pressed', String(button.dataset.size === cardSize));
       button.addEventListener('click', function () {
         document.body.dataset.cardSize = button.dataset.size;
         App.Storage.set('bookmark-card-size', button.dataset.size);
-        document.querySelectorAll('.size-option').forEach(function (option) {
+        root.querySelectorAll('.size-option').forEach(function (option) {
           option.classList.toggle('active', option === button);
           option.setAttribute('aria-pressed', String(option === button));
         });
@@ -1000,13 +1253,13 @@ window.App.Workspace = (function () {
     // write re-reads the record first, because the sliders keep their own copy.
     var RADIUS_BY_SHAPE = { soft: 16, square: 8, pill: 28 };
     var COLUMN_MIN = 2, COLUMN_MAX = 6;
-    var shapeButtons = Array.prototype.slice.call(document.querySelectorAll('.shape-option'));
-    var columnButtons = Array.prototype.slice.call(document.querySelectorAll('.column-step'));
-    var columnOutput = document.getElementById('column-count');
-    var radiusControl = document.getElementById('radius-control');
-    var radiusValue = document.getElementById('radius-value');
-    var columnsControl = document.getElementById('columns-control');
-    var columnsValue = document.getElementById('columns-value');
+    var shapeButtons = Array.prototype.slice.call(root.querySelectorAll('.shape-option'));
+    var columnButtons = Array.prototype.slice.call(root.querySelectorAll('.column-step'));
+    var columnOutput = byId('column-count');
+    var radiusControl = byId('radius-control');
+    var radiusValue = byId('radius-value');
+    var columnsControl = byId('columns-control');
+    var columnsValue = byId('columns-value');
 
     function storedPrefs() { return App.Storage.get('bookmark-preferences', {}) || {}; }
     function storePref(key, value) {
@@ -1068,10 +1321,10 @@ window.App.Workspace = (function () {
     var savedPrefs = storedPrefs();
     applyColumns(parseInt(savedPrefs.columns, 10) || 4, false);
     applyShape(savedPrefs.cardShape || 'soft', false);
-    var sortSelect = document.getElementById('bookmark-sort');
+    var sortSelect = byId('bookmark-sort');
     if (sortSelect) {
-      sortSelect.value = App.Storage.get('bookmark-sort', 'custom');
-      sortSelect.addEventListener('change', function () { App.Storage.set('bookmark-sort', sortSelect.value); renderCards(); });
+      sortSelect.value = App.Storage.get(skey('bookmark-sort'), 'custom');
+      sortSelect.addEventListener('change', function () { App.Storage.set(skey('bookmark-sort'), sortSelect.value); renderCards(); });
     }
     if (importInput) importInput.addEventListener('change', function () {
       var file = importInput.files && importInput.files[0];
@@ -1084,7 +1337,7 @@ window.App.Workspace = (function () {
       };
       reader.readAsText(file);
     });
-    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) chrome.storage.local.get('quickSaveDraft', function (data) {
+    if (isPrimary && typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) chrome.storage.local.get('quickSaveDraft', function (data) {
       var draft = data && data.quickSaveDraft;
       if (!draft || !quickSaveModal) return;
       quickSaveTitle.value = draft.title || '';
@@ -1095,7 +1348,7 @@ window.App.Workspace = (function () {
       quickSaveTitle.focus();
     });
     if (location.hash === '#quick-save') setTimeout(function () { if (quickSaveTitle) quickSaveTitle.focus(); }, 0);
-    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    if (isPrimary && typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       if (message && message.type === 'GLASS_NEW_TAB_QUICK_SAVE') {
         var saved = captureTab(message.tab);
         if (typeof sendResponse === 'function') sendResponse({ saved: saved === true || saved === 'exists' });
@@ -1104,14 +1357,14 @@ window.App.Workspace = (function () {
         message.bookmarks.forEach(captureTab);
       }
     });
-    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) chrome.storage.local.get('pendingQuickSaves', function (data) {
+    if (isPrimary && typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) chrome.storage.local.get('pendingQuickSaves', function (data) {
       var pending = data && data.pendingQuickSaves;
       if (Array.isArray(pending) && pending.length) {
         var remaining = pending.filter(function (bookmark) { var saved = captureTab(bookmark); return saved !== true && saved !== 'exists'; });
           chrome.storage.local.set({ pendingQuickSaves: remaining });
       }
     });
-    var chromeImport = document.getElementById('import-chrome-bookmarks-btn');
+    var chromeImport = byId('import-chrome-bookmarks-btn');
     if (chromeImport) chromeImport.addEventListener('click', importChromeBookmarks);
     render();
   }
@@ -1188,15 +1441,15 @@ window.App.Workspace = (function () {
     return button;
   }
   function openNameModal(modalId, inputId) {
-    var modal = document.getElementById(modalId), input = document.getElementById(inputId);
+    var modal = byId(modalId), input = byId(inputId);
     if (!modal || !input) return;
     input.value = '';
     modal.classList.remove('hidden');
     input.focus();
   }
   function bindNameModal(modalId, inputId, closeId, saveId, create) {
-    var modal = document.getElementById(modalId), input = document.getElementById(inputId);
-    var close = document.getElementById(closeId), saveButton = document.getElementById(saveId);
+    var modal = byId(modalId), input = byId(inputId);
+    var close = byId(closeId), saveButton = byId(saveId);
     if (!modal || !input) return;
     if (close) close.addEventListener('click', function () { modal.classList.add('hidden'); });
     modal.addEventListener('click', function (event) { if (event.target === modal) modal.classList.add('hidden'); });
@@ -1232,16 +1485,16 @@ window.App.Workspace = (function () {
     });
   }
   function openBookmarkEditor(bookmark) {
-    var modal = document.getElementById('bookmark-modal');
+    var modal = byId('bookmark-modal');
     if (!modal) return;
-    var pageSelect = document.getElementById('bm-page');
-    var boardSelect = document.getElementById('bm-category');
-    var nameInput = document.getElementById('bm-name');
-    var urlInput = document.getElementById('bm-url');
-    var descriptionInput = document.getElementById('bm-description');
-    var tagsInput = document.getElementById('bm-tags');
-    var title = document.getElementById('bm-modal-title');
-    var save = document.getElementById('bm-save');
+    var pageSelect = byId('bm-page');
+    var boardSelect = byId('bm-category');
+    var nameInput = byId('bm-name');
+    var urlInput = byId('bm-url');
+    var descriptionInput = byId('bm-description');
+    var tagsInput = byId('bm-tags');
+    var title = byId('bm-modal-title');
+    var save = byId('bm-save');
     editingId = bookmark ? bookmark.id : null;
     title.textContent = bookmark ? 'Edit bookmark' : 'Add bookmark';
     save.textContent = bookmark ? 'Save changes' : 'Add bookmark';
@@ -1401,4 +1654,36 @@ window.App.Workspace = (function () {
     exportBookmarksHTML: exportBookmarksHTML,
     exportBookmarksCSV: exportBookmarksCSV
   };
+  } // end create(opts)
+
+  var instances = [];
+  function forward(name) {
+    return function () {
+      var target = instances[0];
+      return target && typeof target[name] === 'function' ? target[name].apply(target, arguments) : undefined;
+    };
+  }
+  var api = {
+    init: function () {
+      buildSecondKeeper();
+      instances = [create({ suffix: '' }), create({ suffix: '-2' })];
+      instances.forEach(function (instance) { instance.init(); });
+    },
+    // Settings edits the shared card preferences; every keeper redraws from them.
+    refreshCardPreferences: function () {
+      instances.forEach(function (instance) { instance.refreshCardPreferences(); });
+    },
+    subscribe: function (listener) {
+      var offs = instances.map(function (instance) { return instance.subscribe(listener); });
+      return function () { offs.forEach(function (off) { if (off) off(); }); };
+    },
+    keepers: function () { return instances.slice(); }
+  };
+  ['pages', 'boards', 'currentIds', 'currentPage', 'currentBoard', 'setActive', 'addPage', 'addBoard',
+   'renamePage', 'renameBoard', 'deletePage', 'deleteBoard', 'createBookmark', 'captureTab',
+   'toggleFavorite', 'moveFavorite', 'openBookmark', 'getVisibleBookmarks', 'setQuery',
+   'updateBookmark', 'moveBookmark', 'removeBookmark', 'restoreBookmark', 'undo', 'redo',
+   'setTrashView', 'isTrashView', 'dataForExport', 'importJSON', 'exportWorkspace',
+   'exportBookmarksHTML', 'exportBookmarksCSV'].forEach(function (name) { api[name] = forward(name); });
+  return api;
 })();

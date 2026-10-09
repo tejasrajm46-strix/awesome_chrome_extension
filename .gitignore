@@ -13,3 +13,8 @@
 Thumbs.db
 desktop.ini
 *.swp
+
+# The tooling session directory and the outer "push" archive are not part of the
+# shipped extension (the real artifact is releases/*.zip).
+/.commandcode/
+/glass-new-tab-v1.3.0-push.zip

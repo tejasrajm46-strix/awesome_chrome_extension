@@ -1,6 +1,7 @@
 window.App = window.App || {};
 window.App.Clock = (function () {
   var timeEl, ampmEl, dateEl, greetEl;
+  var timer = null;
   var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -39,7 +40,10 @@ window.App.Clock = (function () {
     greetEl = document.getElementById('greeting');
     if (!timeEl || !dateEl || !greetEl) return;
     tick();
-    setInterval(tick, 1000);
+    // init() is re-run when Settings flips 12/24-hour, so the previous timer is
+    // cleared first — otherwise every toggle leaves another interval ticking.
+    if (timer) clearInterval(timer);
+    timer = setInterval(tick, 1000);
   }
 
   return { init: init };

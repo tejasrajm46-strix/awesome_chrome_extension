@@ -2,12 +2,26 @@ window.App = window.App || {};
 window.App.Settings = (function () {
   var overlay, openBtn, closeBtn, resetBtn;
 
+  // A fresh dashboard shows one bookmark panel. The second keeper is a spare, so
+  // it starts switched off rather than opening an empty twin beside the first;
+  // one tick in Settings brings it back.
+  var DEFAULT_HIDDEN = ['bookmarks-2'];
+
+  function hiddenWidgets() {
+    var stored = App.Storage.get('hidden-widgets', null);
+    return Array.isArray(stored) ? stored.slice() : DEFAULT_HIDDEN.slice();
+  }
+
   function applyWidgetVisibility() {
-    var hidden = App.Storage.get('hidden-widgets', []);
+    var hidden = hiddenWidgets();
     document.querySelectorAll('[data-toggle]').forEach(function (cb) {
       var id = cb.dataset.toggle;
       cb.checked = hidden.indexOf(id) === -1;
-      var el = document.getElementById(id + '-section') || document.getElementById(id + '-block') || document.getElementById(id + '-wrapper');
+      // Widgets are also addressed by data-widget-id, so a panel whose element id
+      // does not follow the `<id>-section` pattern (the second bookmark keeper)
+      // is reachable by the same toggle.
+      var el = document.getElementById(id + '-section') || document.getElementById(id + '-block') || document.getElementById(id + '-wrapper') ||
+        document.querySelector('[data-widget-id="' + id + '"]');
       if (el) {
         if (hidden.indexOf(id) > -1) el.classList.add('hidden');
         else el.classList.remove('hidden');
@@ -19,9 +33,6 @@ window.App.Settings = (function () {
     var mode = App.Storage.get('theme-mode', 'glass');
     document.body.setAttribute('data-mode', mode);
     document.querySelectorAll('.mode-btn').forEach(function (button) { button.classList.toggle('active', button.dataset.mode === mode); });
-    document.querySelectorAll('.mode-btn').forEach(function (b) {
-      b.classList.toggle('active', b.dataset.mode === mode);
-    });
   }
 
   function applyAccent() {
@@ -35,7 +46,6 @@ window.App.Settings = (function () {
     document.querySelectorAll('.accent-btn').forEach(function (b) {
       b.classList.toggle('active', b.dataset.accent === color);
     });
-    document.querySelectorAll('.accent-btn[data-accent="' + color + '"]').forEach(function (button) { button.classList.add('active'); });
   }
 
   function applyClockFormat() {
@@ -136,6 +146,48 @@ window.App.Settings = (function () {
     }
   }
 
+  // The quote widget draws from the built-in library, from the lines typed here,
+  // or from both. The textarea is the whole editor: one quote per line, an
+  // optional "— Author" on the end. Parsing lives in App.Quote so the widget and
+  // this count can never disagree about what a line means.
+  function initQuotePreferences() {
+    var textarea = document.getElementById('quotes-custom');
+    if (!textarea || !App.Quote) return;
+    var sourceSelect = document.getElementById('quote-source');
+    var shuffle = document.getElementById('quote-shuffle');
+    var count = document.getElementById('quote-count');
+
+    function reportCount() {
+      if (!count) return;
+      var total = App.Quote.parse(textarea.value).length;
+      count.textContent = total
+        ? total + (total === 1 ? ' quote of your own' : ' quotes of your own')
+        : 'Nothing of your own yet — the built-in library is still in use.';
+    }
+
+    textarea.value = App.Storage.get('quotes-text', '');
+    if (sourceSelect) sourceSelect.value = App.Storage.get('quote-source', 'both');
+    reportCount();
+
+    textarea.addEventListener('input', reportCount);
+    // Saved on blur (change), not on every keystroke: a half-typed line should not
+    // become the day's quote mid-word.
+    textarea.addEventListener('change', function () {
+      var value = textarea.value.trim();
+      if (value) App.Storage.set('quotes-text', value);
+      else App.Storage.del('quotes-text');
+      reportCount();
+      App.Quote.refresh();
+    });
+    if (sourceSelect) {
+      sourceSelect.addEventListener('change', function () {
+        App.Storage.set('quote-source', sourceSelect.value);
+        App.Quote.refresh();
+      });
+    }
+    if (shuffle) shuffle.addEventListener('click', function () { App.Quote.shuffle(); });
+  }
+
   function init() {
     overlay = document.getElementById('settings-overlay');
     openBtn = document.getElementById('btn-settings');
@@ -150,6 +202,7 @@ window.App.Settings = (function () {
     applyWidgetVisibility();
     initBookmarkPreferences();
     initCustomSearch();
+    initQuotePreferences();
 
     openBtn.addEventListener('click', function () { overlay.classList.remove('hidden'); });
     closeBtn.addEventListener('click', function () { overlay.classList.add('hidden'); });
@@ -187,7 +240,7 @@ window.App.Settings = (function () {
 
     document.querySelectorAll('[data-toggle]').forEach(function (cb) {
       cb.addEventListener('change', function () {
-        var hidden = App.Storage.get('hidden-widgets', []);
+        var hidden = hiddenWidgets();
         var id = cb.dataset.toggle;
         if (cb.checked) {
           var idx = hidden.indexOf(id);

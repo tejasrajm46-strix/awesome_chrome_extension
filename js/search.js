@@ -231,5 +231,7 @@ window.App.Search = (function () {
     return true;
   }
   function getEngines() { return ENGINES; }
-  function getCurrentEngine() { return getEngine(); }    return { init: init, setEngine: setEngine, getEngines: getEngines, getCurrentEngine: getCurrentEngine };
+  function getCurrentEngine() { return getEngine(); }
+
+  return { init: init, setEngine: setEngine, getEngines: getEngines, getCurrentEngine: getCurrentEngine };
 })();

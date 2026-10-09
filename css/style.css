@@ -46,7 +46,7 @@
 }
 [data-mode="glass"] .bg-overlay{background:rgba(0,0,0,0.15)}
 
-html,body{min-height:100%;height:100%;overflow-y:auto;overflow-x:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text-primary);background:#0a0a14}
+html,body{min-height:100%;height:100%;overflow-y:auto;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:var(--text-primary);background:#0a0a14}
 
 .bg-layer{position:fixed;inset:0;z-index:0;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e)}
 .bg-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -100,6 +100,10 @@ html,body{min-height:100%;height:100%;overflow-y:auto;overflow-x:hidden;font-fam
 .quote-text::after{content:'\201D'}
 .quote-author{display:block;font-size:12px;color:var(--text-dim);margin-top:2px}
 .quote-author::before{content:'\2014\00a0'}
+/* A quote the user typed without a credit has an empty author, and the em dash
+   above is a pseudo-element, so it would still paint a line of its own. :empty
+   ignores pseudo-elements, which makes this the whole fix. */
+.quote-author:empty{display:none}
 
 /* ===== Bookmarks ===== */
 .bookmarks-widget{margin-top:auto}
@@ -162,6 +166,13 @@ html,body{min-height:100%;height:100%;overflow-y:auto;overflow-x:hidden;font-fam
 [data-mode="light"] .modal-input{background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.08)}
 .modal-input:focus{border-color:var(--accent)}
 .modal-input::placeholder{color:var(--text-dim)}
+/* Quote editor. The textarea is a .modal-input, so it only needs a box tall enough
+   to hold a few lines, and the action button beside its count is auto-width rather
+   than the full-width default of .settings-btn. */
+.quote-textarea{min-height:118px;line-height:1.45;resize:vertical}
+.quote-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.quote-actions .settings-btn{width:auto;text-align:center}
+.quote-actions .custom-search-help{margin:0;flex:1 1 130px;min-width:0}
 
 /* ===== Onboarding ===== */
 .onboarding{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);animation:fadeIn 0.5s ease}
@@ -211,7 +222,7 @@ html,body{min-height:100%;height:100%;overflow-y:auto;overflow-x:hidden;font-fam
 }
 
 /* ===== Bookmark-first responsive dashboard ===== */
-:root{--bookmark-columns:4;--visible-bookmark-columns:var(--bookmark-columns);--card-opacity:.08;--card-radius:16px;--bookmark-icon-size:36px;--glass-blur:blur(18px)}
+:root{--bookmark-columns:4;--visible-bookmark-columns:var(--bookmark-columns);--card-opacity:.08;--card-radius:16px;--bookmark-icon-size:36px;--glass-blur:blur(18px);--list-row-height:52px;--list-row-height-compact:38px}
 html,body{min-height:100%;height:auto;overflow-x:hidden;overflow-y:auto}
 
 .bg-layer{position:fixed;inset:0;background:radial-gradient(ellipse at 10% 6%,rgba(65,79,150,.26),transparent 38%),radial-gradient(ellipse at 90% 88%,rgba(72,52,123,.25),transparent 40%),linear-gradient(135deg,#10121e,#171a2b 54%,#121421)}
@@ -276,9 +287,15 @@ body{background:#0b0d16}
 .quote-block{padding:7px 0 7px 14px;border-left-width:2px}
 .quote-text{font-size:13px}
 .bookmarks-widget{width:auto;max-width:calc(100vw - 24px);padding:clamp(14px,1.6vw,22px);margin:0;border-radius:24px;background:rgba(255,255,255,.065);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border-color:rgba(255,255,255,.11)}
-.bookmark-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+/* The h1 above is out of flow, so the actions are the heading's only flex item:
+   flex-end is what keeps "+ Add Bookmark" and ⋯ pinned to the panel's right edge. */
+.bookmark-heading{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-bottom:12px}
 .eyebrow{display:block;color:var(--accent);font-size:10px;font-weight:700;letter-spacing:.17em;margin-bottom:8px}
-.bookmark-heading h1{font-size:clamp(17px,1.8vw,22px);line-height:1.15;letter-spacing:-.02em}
+/* The panel ships as a tall narrow column (~275px). "Bookmarks" plus the two
+   actions cannot share that one row, so the title is kept for screen readers and
+   assistive tech — it is still the panel's accessible name, and the workspace
+   still rewrites it to Favorites / Recently Deleted — but paints no text. */
+.bookmark-heading h1{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 .bookmark-actions{display:flex;gap:9px;align-items:center;flex-shrink:0}
 .toolbar-btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 15px;border-radius:12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s,transform .2s;color:var(--text-primary)}
 .toolbar-btn:hover{transform:translateY(-1px)}
@@ -400,9 +417,14 @@ body[data-card-size="large"] .bm-description{font-size:12px}
 .widget-edit-mode #btn-customize,.widget-edit-mode #btn-settings{z-index:30}
 .widget-resize-handles{position:absolute;inset:0;display:none;pointer-events:none;z-index:20}
 .widget-edit-mode .widget-selected .widget-resize-handles{display:block}
-.widget-resize-handle{position:absolute;display:block;width:12px;height:12px;border:2px solid #fff;border-radius:4px;background:var(--accent);box-shadow:0 2px 10px rgba(0,0,0,.35);pointer-events:auto;touch-action:none}
-.handle-n{top:-7px;left:calc(50% - 6px);cursor:ns-resize}.handle-e{right:-7px;top:calc(50% - 6px);cursor:ew-resize}.handle-s{bottom:-7px;left:calc(50% - 6px);cursor:ns-resize}.handle-w{left:-7px;top:calc(50% - 6px);cursor:ew-resize}
-.handle-ne{right:-7px;top:-7px;cursor:nesw-resize}.handle-nw{left:-7px;top:-7px;cursor:nwse-resize}.handle-se{right:-7px;bottom:-7px;cursor:nwse-resize}.handle-sw{left:-7px;bottom:-7px;cursor:nesw-resize}
+/* The wrapper is a 20px touch target while the visible dot stays 12px (the
+   ::after inset), so a corner is easy to grab without the handle looking heavy. */
+.widget-resize-handle{position:absolute;display:block;width:20px;height:20px;border:0;background:transparent;pointer-events:auto;touch-action:none}
+.widget-resize-handle::after{content:'';position:absolute;inset:4px;border:2px solid #fff;border-radius:4px;background:var(--accent);box-shadow:0 2px 10px rgba(0,0,0,.35);transition:transform .12s ease,background .12s ease}
+.widget-resize-handle:hover::after{transform:scale(1.18);background:var(--accent-hover)}
+.widget-resize-handle:active::after{transform:scale(1.04)}
+.handle-n{top:-10px;left:calc(50% - 10px);cursor:ns-resize}.handle-e{right:-10px;top:calc(50% - 10px);cursor:ew-resize}.handle-s{bottom:-10px;left:calc(50% - 10px);cursor:ns-resize}.handle-w{left:-10px;top:calc(50% - 10px);cursor:ew-resize}
+.handle-ne{right:-10px;top:-10px;cursor:nesw-resize}.handle-nw{left:-10px;top:-10px;cursor:nwse-resize}.handle-se{right:-10px;bottom:-10px;cursor:nwse-resize}.handle-sw{left:-10px;bottom:-10px;cursor:nesw-resize}
 .widget-pointer-active{cursor:grabbing!important}.widget-pointer-active *{user-select:none!important}
 .widget-edit-bar{position:fixed;z-index:1000;left:50%;bottom:18px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;max-width:calc(100vw - 24px);padding:9px 12px 9px 16px;border:1px solid rgba(255,255,255,.14);border-radius:16px;background:rgba(17,19,31,.94);backdrop-filter:blur(20px);box-shadow:0 15px 50px rgba(0,0,0,.42);color:var(--text-secondary);font-size:11px;white-space:nowrap}
 .widget-edit-bar.hidden{display:none!important}
@@ -415,9 +437,6 @@ body[data-card-size="large"] .bm-description{font-size:12px}
 /* Local bookmark workspace: pages, boards, import/export and recovery */
 .bookmark-heading>div:first-child{min-width:0}
 .bookmarks-widget{position:relative}
-.workspace-label{display:flex;align-items:center;gap:10px;margin:0 0 5px;color:var(--text-dim);font-size:9px;font-weight:800;letter-spacing:.16em}
-.workspace-label span{font-size:10px;font-weight:500;letter-spacing:0;text-transform:none}
-.board-label{margin-top:8px}
 .page-tabs{display:flex;gap:6px;overflow-x:auto;padding:0 0 4px;scrollbar-width:thin}
 .page-tab{flex:0 0 auto;padding:7px 12px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.035);color:var(--text-secondary);font-family:inherit;font-size:11.5px;font-weight:600;cursor:pointer;transition:.2s}
 .page-tab:hover,.page-tab.active{color:var(--text-primary);border-color:var(--accent);background:var(--accent-glow)}
@@ -478,8 +497,6 @@ body[data-card-size="large"] .bm-description{font-size:12px}
   .bookmark-card-action{opacity:1}
 }
 @media(max-width:520px){
-  .workspace-label{font-size:8px}
-  .workspace-label span{font-size:9px}
   .page-tab{padding:8px 11px;font-size:11px}
   .bookmark-filter{min-width:0}
   .bookmark-card-action.edit-bookmark{right:98px}
@@ -538,14 +555,13 @@ body[data-card-shape="pill"] .bm-icon{border-radius:999px}
    in the degenerate case where the panel is shorter than its own chrome: the
    overflow is then absorbed inside a shrunken row instead of leaking out. */
 .bookmarks-widget>.bookmark-heading,
-.bookmarks-widget>.workspace-label,
 .bookmarks-widget>.tab-scroller,
 .bookmarks-widget>.bookmark-toolbar,
 .bookmarks-widget>.bookmarks-status,
 .bookmarks-widget>.bookmarks-empty{flex:0 1 auto}
 /* min-height:0 is what lets this shrink below its content; without it a flex item
    refuses to go under its intrinsic height and the panel overflows again. */
-.bookmarks-grid{flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
+.bookmarks-grid{flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.3) transparent;scrollbar-gutter:stable}
 .bookmarks-grid::-webkit-scrollbar{width:8px}.bookmarks-grid::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:8px}.bookmarks-grid::-webkit-scrollbar-track{background:transparent}
 /* The fade follows the scroll position and is removed at the end of the list, so
    it always means "there is more below" and never hides the last row. */
@@ -579,7 +595,8 @@ body[data-card-shape="pill"] .bm-icon{border-radius:999px}
    backdrop-filter was the single most expensive effect on the page. */
 .bm-icon--fallback img{display:none}
 .bm-icon--fallback .bm-fallback{display:flex;align-items:center;justify-content:center}
-.widget-resize-handle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.widget-resize-handle:focus-visible{outline:none}
+.widget-resize-handle:focus-visible::after{box-shadow:0 0 0 3px var(--accent-glow),0 2px 10px rgba(0,0,0,.35)}
 .widget-edit-mode .free-widget:focus-within{outline:1px solid var(--accent);outline-offset:4px}
 
 /* Editorial hints — "Choose a workspace", "Groups in this page", the "In" / "Sort"
@@ -606,3 +623,72 @@ body[data-card-shape="pill"] .bm-icon{border-radius:999px}
    the menu rows block-level and left-aligned. */
 .widget-edit-mode .bookmark-open-options .bookmark-card-action{display:block;justify-content:flex-start}
 @media(prefers-reduced-motion:reduce){.workspace-bookmark-card .bookmark-card-action{transition:none}}
+
+/* ==========================================================================
+   Page / board picker — dropdowns by default, pill rows on request
+   ========================================================================== */
+.workspace-selectors{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px;min-width:0}
+.bookmarks-widget>.workspace-selectors{flex:0 1 auto}
+.selector-field{display:flex;align-items:center;gap:6px;min-width:0;flex:0 1 auto}
+.selector-field select{max-width:200px;min-width:0;padding:6px 26px 6px 10px;font:inherit;font-size:12px;font-weight:600;color:var(--text-primary);background-color:rgba(255,255,255,.07);background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;border:1px solid rgba(255,255,255,.12);border-radius:10px;cursor:pointer;appearance:none;-webkit-appearance:none;transition:border-color .2s,background-color .2s,box-shadow .2s}
+.selector-field select:hover{border-color:rgba(255,255,255,.22);background-color:rgba(255,255,255,.11)}
+.selector-field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.selector-mode-btn{padding:6px 11px;font:inherit;font-size:11px;font-weight:700;color:var(--text-secondary);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.selector-mode-btn:hover{background:rgba(255,255,255,.13);color:var(--text-primary)}
+.selector-mode-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--text-primary)}
+
+/* ==========================================================================
+   Layout switch — grid of cards, vertical list or compact list
+   ========================================================================== */
+.layout-switch{display:flex;align-items:center;gap:2px;padding:3px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:11px;flex:0 0 auto}
+.layout-option{width:28px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;line-height:1;color:var(--text-secondary);background:transparent;border:0;border-radius:8px;cursor:pointer;transition:background .18s,color .18s}
+.layout-option:hover{background:rgba(255,255,255,.12);color:var(--text-primary)}
+.layout-option.active{background:var(--accent);color:#fff}
+
+/* Grid is the default and needs no override; these two stack the cards into
+   full-width rows instead. Kept at the end of the file so they win over the
+   grid rules and the responsive breakpoints above them. */
+/* nowrap matters: the grid carries flex-wrap:wrap from its base rule, and a
+   wrapping column flexbox spills its overflow into a *second column* instead of
+   scrolling — which is exactly what a long list in a short panel does. A list is
+   one column, whatever its height. */
+/* One row = one fixed box. Two things used to break that: the row was a flex item
+   of a scrolling column, so it *shrank* whenever the list outgrew the panel (a
+   36px icon inside a 22px box, spilling over the pill), and its height otherwise
+   followed its content. flex:0 0 <height> plus box-sizing:border-box pins it: a
+   row is 52px at any list length, so the list scrolls instead of squashing and
+   every row lines up. */
+.bookmarks-widget[data-layout="list"] .bookmarks-grid{display:flex;flex-direction:column;flex-wrap:nowrap;gap:6px}
+.bookmarks-widget[data-layout="list"] .bm-item{flex:0 0 var(--list-row-height);height:var(--list-row-height);box-sizing:border-box;min-height:0;padding:0 12px;gap:11px}
+.bookmarks-widget[data-layout="list"] .bm-icon{width:32px;height:32px;flex:0 0 32px;border-radius:9px}
+.bookmarks-widget[data-layout="list"] .bm-name{display:block;-webkit-line-clamp:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bookmarks-widget[data-layout="list"] .bm-text{flex:1 1 auto;min-width:0;display:flex;align-items:center}
+.bookmarks-widget[data-layout="list"] .column-stepper{display:none}
+
+.bookmarks-widget[data-layout="compact"] .bookmarks-grid{display:flex;flex-direction:column;flex-wrap:nowrap;gap:4px}
+.bookmarks-widget[data-layout="compact"] .bm-item{flex:0 0 var(--list-row-height-compact);height:var(--list-row-height-compact);box-sizing:border-box;min-height:0;padding:0 10px;gap:9px;border-radius:10px}
+.bookmarks-widget[data-layout="compact"] .bm-name{display:block;-webkit-line-clamp:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+.bookmarks-widget[data-layout="compact"] .bm-icon{width:20px;height:20px;min-width:20px}
+.bookmarks-widget[data-layout="compact"] .bm-description,
+.bookmarks-widget[data-layout="compact"] .bookmark-tags{display:none}
+.bookmarks-widget[data-layout="compact"] .column-stepper{display:none}
+
+/* ==========================================================================
+   Bookmark options only exist while Customizing.
+   The panel keeps its heading, search and cards; every *choice* — the page and
+   board picker (either form), the scope and sort selects, card size, shape,
+   columns and the layout switch — is a Customize-mode control, so a normal new
+   tab shows the library instead of its own settings.
+   ========================================================================== */
+.bookmarks-widget>.workspace-selectors,
+.bookmarks-widget>.tab-scroller,
+.bookmark-toolbar>.toolbar-options{display:none}
+body.widget-edit-mode .bookmarks-widget>.workspace-selectors,
+body.widget-edit-mode .bookmarks-widget>.tab-scroller,
+body.widget-edit-mode .bookmark-toolbar>.toolbar-options{display:flex}
+
+/* Keyboard focus rings. Arrow-key navigation moves focus card to card, so the
+   focused card needs a clear ring in every layout; the toolbar controls and the
+   card switches get the same treatment. */
+.workspace-bookmark-card:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.size-option:focus-visible,.layout-option:focus-visible,.selector-mode-btn:focus-visible,.toolbar-btn:focus-visible,.text-action:focus-visible{outline:2px solid var(--accent);outline-offset:2px}

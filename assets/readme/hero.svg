@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="t d">
+  <title id="t">Glass New Tab — bookmark pages and boards for your new tab</title>
+  <desc id="d">On the left, the project name and promise: bookmarks as a real library, with pages, boards and a panel that scrolls. On the right, a specimen of the bookmark panel: an Add Bookmark button, a search field with an Exact toggle, three bookmark cards with favicons, a scrollbar, and the line "23 bookmarks · All pages".</desc>
+
+  <defs>
+    <radialGradient id="glow" cx="0.08" cy="1.05" r="0.9">
+      <stop offset="0" stop-color="#822319" stop-opacity="0.55"/>
+      <stop offset="0.55" stop-color="#822319" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#822319" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="420" rx="26" fill="#0B0A0C"/>
+  <rect width="1200" height="420" rx="26" fill="url(#glow)"/>
+  <rect x="640" y="40" width="1" height="340" fill="#221E24"/>
+
+  <g id="title-block">
+    <g transform="translate(64 88) scale(0.211)">
+      <path fill="#E0483C" fill-rule="evenodd" d="M72 16h112a56 56 0 0 1 56 56v112a56 56 0 0 1-56 56H72a56 56 0 0 1-56-56V72a56 56 0 0 1 56-56zM94 60h68v136l-34-26-34 26z"/>
+    </g>
+    <text x="134" y="122" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="19" letter-spacing="2.4" fill="#A29AA2">CHROME · EDGE · MANIFEST V3 · NO ACCOUNT</text>
+
+    <text x="64" y="214" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="72" font-weight="700" fill="#F6F3F3">Glass New Tab</text>
+
+    <text x="64" y="264" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="23" fill="#C9C3C6">Bookmarks as a real library — pages, boards,</text>
+    <text x="64" y="298" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="23" fill="#C9C3C6">and a panel that scrolls instead of growing.</text>
+
+    <text x="64" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="17" letter-spacing="1.4" fill="#9A9296">NO BUILD STEP · 0 DEPENDENCIES · NO SIGN-IN</text>
+  </g>
+
+  <g id="panel-specimen">
+    <rect x="672" y="44" width="464" height="332" rx="20" fill="#151318" stroke="#2B262C"/>
+
+    <rect x="880" y="68" width="190" height="40" rx="12" fill="#5B8DEF"/>
+    <text x="975" y="94" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="18" font-weight="600" fill="#FFFFFF">+ Add Bookmark</text>
+    <circle cx="1102" cy="88" r="20" fill="#1E1B21" stroke="#2B262C"/>
+    <text x="1102" y="96" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="20" fill="#A29AA2">⋯</text>
+
+    <rect x="696" y="126" width="416" height="42" rx="12" fill="#1E1B21" stroke="#2B262C"/>
+    <circle cx="722" cy="147" r="7" fill="none" stroke="#8B838B" stroke-width="2"/>
+    <path d="M727 152l6 6" stroke="#8B838B" stroke-width="2" stroke-linecap="round"/>
+    <text x="742" y="154" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="18" fill="#8B838B">Search bookmarks</text>
+    <rect x="1018" y="133" width="80" height="28" rx="9" fill="#262229"/>
+    <text x="1058" y="153" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="17" fill="#C9C3C6">Exact</text>
+
+    <rect x="696" y="182" width="416" height="44" rx="12" fill="#1B181E" stroke="#2A252C"/>
+    <circle cx="724" cy="204" r="12" fill="#262229"/>
+    <circle cx="724" cy="204" r="5" fill="#E0483C"/>
+    <text x="748" y="211" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="18" fill="#F0ECEE">ChatGPT</text>
+
+    <rect x="696" y="236" width="416" height="44" rx="12" fill="#1B181E" stroke="#2A252C"/>
+    <rect x="696" y="236" width="3" height="44" rx="1.5" fill="#5B8DEF"/>
+    <circle cx="724" cy="258" r="12" fill="#262229"/>
+    <circle cx="724" cy="258" r="5" fill="#4B7EF7"/>
+    <text x="748" y="265" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="18" fill="#F0ECEE">Free Typing Test</text>
+
+    <rect x="696" y="290" width="416" height="44" rx="12" fill="#1B181E" stroke="#2A252C"/>
+    <circle cx="724" cy="312" r="12" fill="#262229"/>
+    <circle cx="724" cy="312" r="5" fill="#35B37E"/>
+    <text x="748" y="319" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="18" fill="#F0ECEE">Web Apps by 123apps</text>
+
+    <rect x="1096" y="182" width="5" height="112" rx="2.5" fill="#3A3440"/>
+
+    <text x="696" y="362" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="17" fill="#8B838B">23 bookmarks · All pages</text>
+  </g>
+</svg>

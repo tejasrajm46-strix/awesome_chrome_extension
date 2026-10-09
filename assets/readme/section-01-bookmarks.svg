@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="150" viewBox="0 0 1200 150" role="img" aria-labelledby="t d">
+  <title id="t">Bookmarks that scale</title>
+  <desc id="d">Section header 01: pages split the library, boards split a page, and the list scrolls inside the panel.</desc>
+  <rect width="1200" height="150" rx="20" fill="#0B0A0C"/>
+  <rect x="64" y="52" width="5" height="46" rx="2.5" fill="#E0483C"/>
+  <text x="84" y="92" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#E4665F">01</text>
+  <text x="132" y="92" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="44" font-weight="700" fill="#F6F3F3">Bookmarks that scale</text>
+  <text x="132" y="126" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="20" fill="#A29AA2">Pages split the library, boards split a page, and the list scrolls inside the panel.</text>
+  <rect x="820" y="74" width="180" height="1" fill="#221E24"/>
+  <g transform="translate(1030 44)">
+    <path d="M0 0h26v64l-13-12-13 12z" fill="#E0483C"/>
+    <g transform="translate(32 18)"><path d="M0 0h26v46l-13-12-13 12z" fill="#4A444E"/></g>
+    <g transform="translate(64 8)"><path d="M0 0h26v56l-13-12-13 12z" fill="#822319"/></g>
+  </g>
+</svg>

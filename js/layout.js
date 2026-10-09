@@ -20,20 +20,22 @@ window.App.Layout = (function () {
   var EDGE = 12;         // hard inset from the canvas edge
   // The Customize / Settings buttons are position:fixed at the top-right, so the
   // band they occupy is a fixed number of pixels whatever the viewport height is
-  // (16px offset + 42px button + breathing room). The first widget therefore gets
-  // a fixed clearance off the top rather than a fraction of the height — a pure
-  // fraction would tuck it straight under those buttons on a short screen.
-  // 78px clears the tallest case: at <980px the button sits at top:26px with a
-  // 42px height, so its bottom edge is 68px; the extra 10px is breathing room.
+  // (16px offset + 42px button + breathing room). A full-width widget — which is
+  // what the compact stack gives the clock — therefore gets a fixed clearance off
+  // the top rather than a fraction of the height: a pure fraction would tuck it
+  // straight under those buttons on a short screen. 78px clears the tallest case:
+  // at <980px the button sits at top:26px with a 42px height, so its bottom edge
+  // is 68px; the extra 10px is breathing room. The centered clock on a wide screen
+  // shares no horizontal space with those buttons and deliberately sits higher.
   var TOP_CLEARANCE = 78;
 
-  var MIN_WIDTHS = { bookmarks: 260, clock: 180, search: 220, quote: 200 };
+  var MIN_WIDTHS = { bookmarks: 260, 'bookmarks-2': 260, clock: 180, search: 220, quote: 200 };
   // The bookmark panel is the one widget whose body is a list of many items, so
   // its height has to leave room for the controls above and below that list
   // (title, page/board rows, search and sort row, status line). A box shorter
   // than its own chrome cannot be honoured: the controls would be squeezed out of
   // it. 440px is the measured chrome at its widest wrapping plus one card row.
-  var MIN_HEIGHTS = { bookmarks: 440 };
+  var MIN_HEIGHTS = { bookmarks: 440, 'bookmarks-2': 440 };
 
   function read(key, fallback) { return App.Storage.get(key, fallback); }
   function save(key, value) { App.Storage.set(key, value); }
@@ -84,6 +86,12 @@ window.App.Layout = (function () {
   // Vertical positions are pure fractions of the viewport height. The previous
   // implementation mixed fractions with pixel floors (430/height), which pushed
   // the bookmarks widget below the fold on short or zoomed screens.
+  //
+  // The shipped arrangement, measured off a 1600x842 screen: the greeting sits
+  // high and centered, the web search hangs on the left edge, the quote is pinned
+  // to the bottom-left corner and the bookmark panel is a tall column down the
+  // right edge. Wide screens get it as measured; the compact class keeps the
+  // one-column stack, because two columns of widget cannot fit side by side there.
   function defaultPositions(width, height) {
     var cls = sizeClassFor(width);
     height = height || window.innerHeight || 1;
@@ -93,22 +101,27 @@ window.App.Layout = (function () {
         clock:     { x: 0.05, y: top, w: 0.90, h: 0 },
         search:    { x: 0.05, y: 0.16, w: 0.90, h: 0 },
         quote:     { x: 0.05, y: 0.29, w: 0.90, h: 0 },
-        bookmarks: { x: 0.05, y: 0.38, w: 0.90, h: 0 }
+        bookmarks: { x: 0.05, y: 0.38, w: 0.90, h: 0 },
+        'bookmarks-2': { x: 0.05, y: 0.64, w: 0.90, h: 0 }
       };
     }
     if (cls === 'wide') {
       return {
-        clock:     { x: 0.405, y: top, w: 0.19, h: 0 },
-        search:    { x: 0.04,  y: 0.22, w: 0.40, h: 0 },
-        quote:     { x: 0.53,  y: 0.30, w: 0.43, h: 0 },
-        bookmarks: { x: 0.53,  y: 0.38, w: 0.43, h: 0 }
+        // Only the clock reaches the top band, and it is centered, so it clears
+        // the fixed Customize / Settings buttons sitting in the top-right corner.
+        clock:     { x: 0.42,  y: 0.028, w: 0.22, h: 0 },
+        search:    { x: 0.03,  y: 0.224, w: 0.40, h: 0 },
+        quote:     { x: 0.012, y: 0.906, w: 0.45, h: 0 },
+        bookmarks: { x: 0.735, y: 0.375, w: 0.235, h: 0.60 },
+        'bookmarks-2': { x: 0.03, y: 0.42, w: 0.45, h: 0.40 }
       };
     }
     return {
-      clock:     { x: 0.405, y: top, w: 0.19, h: 0 },
-      search:    { x: 0.03,  y: 0.22, w: 0.33, h: 0 },
-      quote:     { x: 0.63,  y: 0.30, w: 0.34, h: 0 },
-      bookmarks: { x: 0.63,  y: 0.38, w: 0.34, h: 0 }
+      clock:     { x: 0.425, y: 0.028, w: 0.19, h: 0 },
+      search:    { x: 0.03,  y: 0.224, w: 0.33, h: 0 },
+      quote:     { x: 0.012, y: 0.906, w: 0.3425, h: 0 },
+      bookmarks: { x: 0.80,  y: 0.387, w: 0.172, h: 0.60 },
+      'bookmarks-2': { x: 0.03, y: 0.42, w: 0.45, h: 0.40 }
     };
   }
 
@@ -277,20 +290,24 @@ window.App.Layout = (function () {
       widgets.forEach(function (widget) {
         applyGeometry(widget, saved[widget.dataset.widgetId], defaults, box);
       });
-      // Widget heights depend on content, so overlaps can only be judged after
-      // the first pass has been laid out.
-      resolveOverlaps(widgets, box);
+      // Overlap resolution exists to keep the *derived* arrangement tidy, so it
+      // runs only while auto-arranging. A saved profile is a position the user
+      // set by hand and is applied verbatim: re-resolving it on every load (or
+      // on every resize) was what moved a dragged widget somewhere else, which
+      // reads as "I cannot arrange the widgets".
+      if (autoArrange) resolveOverlaps(widgets, box);
       clampAll(widgets, box);
       updateCanvasHeight(canvas, widgets, box);
     }
 
     // After a user gesture the DOM holds the arrangement the user just made, so
-    // this normalises *that* and persists it. It must never call applyLayout(),
-    // which re-derives geometry from the saved profiles and would therefore
-    // throw the gesture away.
+    // this normalises *that* and persists it. It must never call applyLayout()
+    // (which re-derives geometry from the saved profiles and would therefore
+    // throw the gesture away) and must never call resolveOverlaps() (which would
+    // drag the widget out from under the pointer to clear a neighbour the user
+    // chose to sit next to).
     function commitGesture() {
       var box = basis(canvas);
-      resolveOverlaps(widgets, box);
       clampAll(widgets, box);
       updateCanvasHeight(canvas, widgets, box);
       commit();
@@ -359,6 +376,7 @@ window.App.Layout = (function () {
     }
 
     function startMove(event, widget) {
+      releaseAutoArrange();
       var box = basis(canvas);
       var rect = widget.getBoundingClientRect();
       action = {
@@ -371,6 +389,7 @@ window.App.Layout = (function () {
     }
 
     function startResize(event, widget, direction) {
+      releaseAutoArrange();
       var canvasRect = canvas.getBoundingClientRect();
       var rect = widget.getBoundingClientRect();
       action = {
@@ -442,6 +461,7 @@ window.App.Layout = (function () {
     }
 
     function nudge(widget, dx, dy) {
+      releaseAutoArrange();
       var box = basis(canvas);
       var margin = inset(box.width);
       var width = widget.offsetWidth;
@@ -454,6 +474,7 @@ window.App.Layout = (function () {
     }
 
     function keyboardResize(widget, direction, key) {
+      releaseAutoArrange();
       var box = basis(canvas);
       var margin = inset(box.width);
       var id = widget.dataset.widgetId;
@@ -467,8 +488,12 @@ window.App.Layout = (function () {
       if (direction === 'e') {
         width = clamp(width + (key === 'ArrowRight' ? STEP : key === 'ArrowLeft' ? -STEP : 0), min, Math.max(min, box.width - left - margin));
       } else if (direction === 'w') {
-        width = clamp(width + (key === 'ArrowLeft' ? STEP : key === 'ArrowRight' ? -STEP : 0), min, Math.max(min, box.width - margin));
-        left = Math.max(margin, left + (widget.offsetWidth - width));
+        // Widening from the west keeps the east edge put, so the cap is that edge
+        // minus the margin — not the container width, which let a west resize
+        // push the widget's right edge past the container.
+        var right = left + widget.offsetWidth;
+        width = clamp(width + (key === 'ArrowLeft' ? STEP : key === 'ArrowRight' ? -STEP : 0), min, Math.max(min, right - margin));
+        left = Math.max(margin, right - width);
       } else if (direction === 's') {
         height = Math.max(minHeight, height + (key === 'ArrowDown' ? STEP : key === 'ArrowUp' ? -STEP : 0));
       } else if (direction === 'n') {
@@ -568,6 +593,20 @@ window.App.Layout = (function () {
       }
       applyLayout();
       if (!autoArrange) commit();
+    }
+
+    // A hand on a widget is an explicit instruction to stop auto-arranging.
+    // With auto arrange left on, the next load re-derives every position from
+    // the defaults and overwrites the saved profile, so the arrangement the user
+    // just made never survives — it reads as "I cannot edit the layout".
+    function releaseAutoArrange() {
+      if (!autoArrange) return;
+      autoArrange = false;
+      save(AUTO_KEY, false);
+      if (autoButton) {
+        autoButton.setAttribute('aria-pressed', 'false');
+        autoButton.textContent = 'Auto arrange: off';
+      }
     }
 
     if (autoButton) {
